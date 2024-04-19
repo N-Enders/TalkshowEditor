@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://ctcf0cie727e3"]
+
+[node name="GraphNode" type="GraphNode"]
+offset_right = 448.0
+offset_bottom = 95.0
+title = "Goto Node"
+slot/0/left_enabled = true
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = true
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 0, 0, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+
+[node name="Connection" type="Container" parent="."]
+layout_mode = 2

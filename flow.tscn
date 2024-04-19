@@ -1,0 +1,68 @@
+[gd_scene load_steps=4 format=3 uid="uid://de4wbolycij03"]
+
+[ext_resource type="Script" path="res://flow.gd" id="1_wmdaj"]
+[ext_resource type="PackedScene" uid="uid://dvuhmjygma4ab" path="res://testNode.tscn" id="2_uhq83"]
+[ext_resource type="PackedScene" uid="uid://t6o0x2m2jp62" path="res://inputNode.tscn" id="3_m671y"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 33.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_wmdaj")
+label = ExtResource("2_uhq83")
+input = ExtResource("3_m671y")
+
+[node name="GraphEdit" type="GraphEdit" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 3.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 181.0
+offset_top = -33.0
+offset_right = 400.0
+offset_bottom = 3.0
+text = "Add Node"
+
+[node name="sortAll" type="Button" parent="."]
+layout_mode = 0
+offset_left = 932.0
+offset_top = -33.0
+offset_right = 1152.0
+offset_bottom = 3.0
+text = "Sort All"
+
+[node name="getData" type="Button" parent="."]
+layout_mode = 0
+offset_left = 713.0
+offset_top = -33.0
+offset_right = 932.0
+offset_bottom = 3.0
+text = "Get Data"
+
+[node name="OptionButton" type="OptionButton" parent="."]
+layout_mode = 0
+offset_top = -33.0
+offset_right = 181.0
+offset_bottom = 3.0
+item_count = 2
+selected = 0
+popup/item_0/text = "Label"
+popup/item_0/id = 0
+popup/item_1/text = "Input"
+popup/item_1/id = 1
+
+[connection signal="connection_request" from="GraphEdit" to="." method="_on_graph_edit_connection_request"]
+[connection signal="disconnection_request" from="GraphEdit" to="." method="_on_graph_edit_disconnection_request"]
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="sortAll" to="." method="_on_sort_all_pressed"]
+[connection signal="pressed" from="getData" to="." method="_on_get_data_pressed"]
