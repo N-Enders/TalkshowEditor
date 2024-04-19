@@ -2,7 +2,8 @@ extends GraphNode
 
 @export var editableText: PackedScene
 
-signal move_connection
+signal add_branch
+signal remove_branch
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -20,6 +21,7 @@ func createBranch(value):
 	move_child(newText,branches)
 	set_slot(branches + 1,false,0,Color.WHITE,true,0,Color.RED)
 	newText.deleted.connect(_deleted_option.bind(newText))
+	add_branch.emit(self)
 
 func _on_add_normal_branch_pressed():
 	createBranch("")
@@ -38,5 +40,10 @@ func getData():
 
 
 func _deleted_option(option):
+	var num = get_children().find(option,0)
 	remove_child(option)
 	set_slot(get_child_count()-1,false,0,Color.WHITE,false,0,Color.RED)
+	remove_branch.emit(self,num)
+
+func no_match_idx():
+	return get_child_count() - 3

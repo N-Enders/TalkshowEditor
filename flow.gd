@@ -31,6 +31,8 @@ func _on_button_pressed():
 			node = input.instantiate()
 			node.createBranch("1")
 			node.createBranch("2")
+			node.remove_branch.connect(_remove_branch)
+			node.add_branch.connect(_add_branch)
 	node.position_offset += initialPos + (node_index * Vector2(10,10))
 	$GraphEdit.add_child(node)
 	node_index += 1
@@ -164,3 +166,23 @@ func _on_sort_all_pressed():
 func _on_get_data_pressed():
 	for child in $GraphEdit.get_children():
 		print(child.getData())
+
+
+func _remove_branch(node,index_deleted):
+	print(node.name + " just deleted option #"+str(index_deleted))
+	var connections = getNodeConnection(node,$GraphEdit.get_connection_list())
+	for a in connections:
+		if (a["from_port"] >= (index_deleted - 1)):
+			$GraphEdit.disconnect_node(a["from_node"],a["from_port"],a["to_node"],a["to_port"])
+		if(a["from_port"] > (index_deleted - 1)):
+			$GraphEdit.connect_node(a["from_node"],a["from_port"] - 1,a["to_node"],a["to_port"])
+
+func _add_branch(node):
+	print(node.name + " just added an option")
+	var connections = getNodeConnection(node,$GraphEdit.get_connection_list())
+	var no_match = node.no_match_idx()
+	print(no_match)
+	for a in connections:
+		if(a["from_port"] == (no_match-1)):
+			$GraphEdit.disconnect_node(a["from_node"],a["from_port"],a["to_node"],a["to_port"])
+			$GraphEdit.connect_node(a["from_node"],a["from_port"] + 1,a["to_node"],a["to_port"])
