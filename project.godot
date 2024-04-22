@@ -11,6 +11,6 @@ config_version=5
 [application]
 
 config/name="TalkshowEditor"
-run/main_scene="res://flow.tscn"
+run/main_scene="res://main_scene.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://icon.svg"
