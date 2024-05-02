@@ -104,61 +104,60 @@ func sort_all():
 			min = connectionCounts[a]
 		if connectionCounts[a] == min:
 			minimalConnections.append(a)
-	var validChildren = $GraphEdit.get_children()
-	for a in validChildren:
-		if not a.name in minimalConnections:
-			validChildren.erase(a)
-	var currentFirst = validChildren[0]
-	min = currentFirst.position_offset
-	for a in validChildren:
-		if a.position_offset < min:
-			currentFirst = a
-			min = currentFirst.position_offset
 	var oldConnectionList = $GraphEdit.get_connection_list()
-	print(oldConnectionList)
-	var connectionsToCheck = [currentFirst.name]
-	var connectionsChecked = []
 	var newConnectionList = []
-	while len(connectionsToCheck) > 0:
-		var curName = connectionsToCheck.pop_front()
-		if curName in connectionsChecked:
-			continue
-		connectionsChecked.append(curName)
-		var preConnections = []
-		print("Checking " + curName)
-		for a in oldConnectionList:
-			print(a)
-			print(a["from_node"] + " = " + curName)
-			if a["from_node"] == curName:
-				preConnections.append(a)
-				connectionsToCheck.append(a["to_node"])
-		preConnections.sort_custom(sort)
-		print("Yknow what happens " + str(preConnections))
-		newConnectionList.append_array(preConnections)
+	print(oldConnectionList)
+	for b in minimalConnections:
+		var connectionsToCheck = [b]
+		var connectionsChecked = []
+		while len(connectionsToCheck) > 0:
+			var curName = connectionsToCheck.pop_front()
+			if curName in connectionsChecked:
+				continue
+			connectionsChecked.append(curName)
+			var preConnections = []
+			print("Checking " + curName)
+			for a in oldConnectionList:
+				print(a)
+				print(a["from_node"] + " = " + curName)
+				if a["from_node"] == curName:
+					preConnections.append(a)
+					connectionsToCheck.append(a["to_node"])
+			preConnections.sort_custom(sort)
+			print("Yknow what happens " + str(preConnections))
+			newConnectionList.append_array(preConnections)
 	print(newConnectionList)
-	print(posNode(currentFirst,Vector2(0,0),newConnectionList))
+	select_all()
+	var y = 0
+	print(minimalConnections)
+	for a in minimalConnections:
+		var node
+		for b in $GraphEdit.get_children():
+			if b.name == a:
+				node = b
+		print(a)
+		y = moveNode(node,Vector2(0,y),newConnectionList)
 	unselect_all()
 
-func posNode(node,vec,connections,alreadyPlaced = []):
-	print(alreadyPlaced)
-	if node.name in alreadyPlaced:
-		return {"newPosY": vec.y, "alreadyPlaced": alreadyPlaced}
+func moveNode(node,vec,connections):
+	if not node.selected:
+		return 0
 	node.position_offset = vec
-	alreadyPlaced.append(node.name)
-	var posX = vec.x
+	node.selected = false
+	var posX = vec.x 
 	var posY = vec.y
-	var newPosY = posY
-	var stuff = getNodeConnection(node,connections)
-	var iteration = 0
-	for a in stuff:
-		iteration += 1
+	var connect = getNodeConnection(node,connections)
+	var nodeSize = node.size.y + 100
+	var newestSize = 0
+	for a in connect:
 		for b in $GraphEdit.get_children():
-			if (b.name == a["to_node"]) and not (b.name in alreadyPlaced):
-				var returningData = posNode(b,Vector2(posX + node.size.x + 100,newPosY),connections, alreadyPlaced)
-				posY = newPosY
-				newPosY = returningData["newPosY"]
-				alreadyPlaced = returningData["alreadyPlaced"]
-	return {"newPosY": posY + node.size.y + 100, "alreadyPlaced": alreadyPlaced}
+			if (b.name == a.to_node and b.selected):
+				var newSize = moveNode(b,Vector2(posX + node.size.x + 100,posY + newestSize),connections)
+				if newSize >= newestSize:
+					newestSize = newSize
+	if nodeSize < newestSize:
+		nodeSize = newestSize
+	return nodeSize + posY
 
 func getNodeConnection(node,connections):
 	var connection = []

@@ -11,6 +11,9 @@ func _process(delta):
 func selectNode():
 	selected = true
 
+func getID():
+	return 0
+
 func getData():
 	return {
 				"type":"label",
