@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dvuhmjygma4ab"]
 
-[ext_resource type="Script" path="res://testNode.gd" id="1_q3aip"]
+[ext_resource type="Script" path="res://labelNode.gd" id="1_q3aip"]
 
 [node name="GraphNode" type="GraphNode"]
 offset_right = 448.0
@@ -32,3 +32,4 @@ layout_mode = 2
 [node name="TextEdit" type="TextEdit" parent="."]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
+placeholder_text = "Empty Label"

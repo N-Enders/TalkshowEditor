@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://de4wbolycij03"]
+[gd_scene load_steps=5 format=3 uid="uid://de4wbolycij03"]
 
 [ext_resource type="Script" path="res://flow.gd" id="1_wmdaj"]
-[ext_resource type="PackedScene" uid="uid://dvuhmjygma4ab" path="res://testNode.tscn" id="2_uhq83"]
+[ext_resource type="PackedScene" uid="uid://dvuhmjygma4ab" path="res://labelNode.tscn" id="2_ad2jk"]
 [ext_resource type="PackedScene" uid="uid://t6o0x2m2jp62" path="res://inputNode.tscn" id="3_m671y"]
+[ext_resource type="PackedScene" uid="uid://dcn1prov3crg6" path="res://referenceNode.tscn" id="4_y34kv"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -13,8 +14,9 @@ offset_top = 33.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_wmdaj")
-label = ExtResource("2_uhq83")
+label = ExtResource("2_ad2jk")
 input = ExtResource("3_m671y")
+reference = ExtResource("4_y34kv")
 
 [node name="GraphEdit" type="GraphEdit" parent="."]
 layout_mode = 1
@@ -52,20 +54,36 @@ offset_right = 932.0
 offset_bottom = 3.0
 text = "Get Data"
 
+[node name="importFlow" type="Button" parent="."]
+layout_mode = 0
+offset_left = 440.0
+offset_top = -33.0
+offset_right = 640.0
+offset_bottom = 3.0
+text = "Import Flowchart"
+
 [node name="OptionButton" type="OptionButton" parent="."]
 layout_mode = 0
 offset_top = -33.0
 offset_right = 181.0
 offset_bottom = 3.0
-item_count = 2
+item_count = 3
 selected = 0
 popup/item_0/text = "Label"
 popup/item_0/id = 0
 popup/item_1/text = "Input"
 popup/item_1/id = 1
+popup/item_2/text = "Reference"
+popup/item_2/id = 2
+
+[node name="ConfirmationDialog" type="ConfirmationDialog" parent="."]
+dialog_text = "Are you sure you want to delete all selected nodes?"
 
 [connection signal="connection_request" from="GraphEdit" to="." method="_on_graph_edit_connection_request"]
+[connection signal="delete_nodes_request" from="GraphEdit" to="." method="_on_graph_edit_delete_nodes_request"]
 [connection signal="disconnection_request" from="GraphEdit" to="." method="_on_graph_edit_disconnection_request"]
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
 [connection signal="pressed" from="sortAll" to="." method="_on_sort_all_pressed"]
 [connection signal="pressed" from="getData" to="." method="_on_get_data_pressed"]
+[connection signal="pressed" from="importFlow" to="." method="_on_import_flow_pressed"]
+[connection signal="confirmed" from="ConfirmationDialog" to="." method="_on_confirmation_dialog_confirmed"]

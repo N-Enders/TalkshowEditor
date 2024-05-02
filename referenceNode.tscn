@@ -1,0 +1,114 @@
+[gd_scene load_steps=4 format=3 uid="uid://dcn1prov3crg6"]
+
+[ext_resource type="Script" path="res://referenceNode.gd" id="1_lfnow"]
+[ext_resource type="PackedScene" uid="uid://bb2ko7vf8sgbp" path="res://code_branch.tscn" id="2_fbdxf"]
+[ext_resource type="PackedScene" uid="uid://bdkp44aslledp" path="res://hitlist_branch.tscn" id="3_ghlq6"]
+
+[node name="referenceCell" type="GraphNode"]
+offset_right = 448.0
+offset_bottom = 139.0
+title = "Reference Cell"
+slot/0/left_enabled = true
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = false
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 1, 1, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+slot/1/left_enabled = false
+slot/1/left_type = 0
+slot/1/left_color = Color(1, 1, 1, 1)
+slot/1/left_icon = null
+slot/1/right_enabled = true
+slot/1/right_type = 0
+slot/1/right_color = Color(1, 0, 0, 1)
+slot/1/right_icon = null
+slot/1/draw_stylebox = true
+slot/2/left_enabled = false
+slot/2/left_type = 0
+slot/2/left_color = Color(1, 1, 1, 1)
+slot/2/left_icon = null
+slot/2/right_enabled = false
+slot/2/right_type = 0
+slot/2/right_color = Color(1, 1, 1, 1)
+slot/2/right_icon = null
+slot/2/draw_stylebox = true
+slot/3/left_enabled = false
+slot/3/left_type = 0
+slot/3/left_color = Color(1, 1, 1, 1)
+slot/3/left_icon = null
+slot/3/right_enabled = false
+slot/3/right_type = 0
+slot/3/right_color = Color(1, 1, 1, 1)
+slot/3/right_icon = null
+slot/3/draw_stylebox = true
+slot/4/left_enabled = false
+slot/4/left_type = 0
+slot/4/left_color = Color(1, 1, 1, 1)
+slot/4/left_icon = null
+slot/4/right_enabled = false
+slot/4/right_type = 0
+slot/4/right_color = Color(1, 1, 1, 1)
+slot/4/right_icon = null
+slot/4/draw_stylebox = true
+script = ExtResource("1_lfnow")
+codeBranch = ExtResource("2_fbdxf")
+hitlistBranch = ExtResource("3_ghlq6")
+
+[node name="Connection" type="Container" parent="."]
+layout_mode = 2
+
+[node name="No Match Branch" type="Container" parent="."]
+custom_minimum_size = Vector2(0, 40)
+layout_direction = 3
+layout_mode = 2
+
+[node name="Label" type="Label" parent="No Match Branch"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 3
+text = "No Match"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="addCodeBranch" type="Button" parent="."]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "Add code branch"
+
+[node name="addHitListBranch" type="Button" parent="."]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "Add hitlist branch"
+
+[node name="cellDetails" type="MarginContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_right = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="cellDetails"]
+layout_mode = 2
+
+[node name="idLabel" type="Label" parent="cellDetails/VBoxContainer"]
+layout_mode = 2
+text = "Cell ID"
+
+[node name="CellID" type="TextEdit" parent="cellDetails/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="varLabel" type="Label" parent="cellDetails/VBoxContainer"]
+layout_mode = 2
+text = "Reference Variable"
+
+[node name="varName" type="TextEdit" parent="cellDetails/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[connection signal="delete_request" from="." to="." method="_on_delete_request"]
+[connection signal="pressed" from="addCodeBranch" to="." method="_on_add_code_branch_pressed"]
+[connection signal="pressed" from="addHitListBranch" to="." method="_on_add_hit_list_branch_pressed"]

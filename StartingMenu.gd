@@ -8,9 +8,13 @@ func _ready():
 	setMainMenuVisible(true)
 	setLoadingVisible(false)
 
+
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass
+
+
 
 func setNewMenuVisible(vis):
 	$newmenulabel.visible = vis
@@ -18,18 +22,26 @@ func setNewMenuVisible(vis):
 	if vis:
 		$newmenucode.text = ""
 
+
+
 func setMainMenuVisible(vis):
 	$Label.visible = vis
 	$Load.visible = vis
 	$New.visible = vis
 
+
+
 func setLoadingVisible(vis):
 	$LoadingLabel.visible = vis
+
+
 
 func _on_new_pressed():
 	setNewMenuVisible(true)
 	setMainMenuVisible(false)
 	setLoadingVisible(false)
+
+
 
 func _on_newmenucode_text_changed():
 	var text = $newmenucode.text
@@ -46,6 +58,7 @@ func _on_newmenucode_text_changed():
 		$newmenulabel.text = "Paste entire \"ExportMain\" class from start.swf (invalid class)"
 
 
+
 func getDataType(data,type):
 	match type:
 		"int":
@@ -57,12 +70,14 @@ func getDataType(data,type):
 		_:
 			print("whoopsie")
 
+
+
 func waitTime():
 	wait += 1
-	print(wait)
-	if ((wait % 100) == 0):
-		print("waiting")
+	if ((wait % 200) == 0):
 		await get_tree().create_timer(1.0).timeout
+
+
 
 func decompStart(start):
 	var startData = {}
@@ -76,6 +91,8 @@ func decompStart(start):
 			line.remove_at(0)
 			var data = "=".join(line).strip_edges().split(';')[0]
 			preData[type] = getDataType(data,dataType)
+	
+	
 	var dict = preData["dict"].split("^")
 	preData.erase("dict")
 	startData["dict"] = preData["f"]
@@ -254,4 +271,4 @@ func decompStart(start):
 		startData["media"][mediaId] = {"id":mediaId, "type": mediaType, "amount": mediaAmount, "medias": miniMedias}
 	preData.erase("media")
 	
-	print(preData)
+	return startData

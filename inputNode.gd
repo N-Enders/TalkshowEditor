@@ -28,14 +28,14 @@ func _on_add_normal_branch_pressed():
 
 func getData():
 	var index = 0
-	var returnValue = {}
+	var returnValue = {"type":"input","data":{}}
 	var children = get_children()
 	while index < len(children) - 1:
 		index += 1
-		if children[index] is TextEdit:
-			returnValue[index] = children[index].getText()
-		elif children[index] is Container:
-			returnValue[index] = "NoMatch"
+		if children[index].has_method("getText"):
+			returnValue["data"][index] = children[index].getText()
+		elif children[index].name == "No Match Branch":
+			returnValue["data"][index] = "NoMatch"
 	return returnValue
 
 

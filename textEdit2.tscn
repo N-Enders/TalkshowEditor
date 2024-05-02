@@ -1,0 +1,24 @@
+[gd_scene load_steps=2 format=3 uid="uid://b4qpnkye06rox"]
+
+[ext_resource type="Script" path="res://textEdit.gd" id="1_glhmi"]
+
+[node name="TextEditContainer" type="Container"]
+custom_minimum_size = Vector2(0, 40)
+offset_bottom = 40.0
+script = ExtResource("1_glhmi")
+
+[node name="Contain" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="Contain"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 0
+text = "X"
+
+[node name="TextEdit" type="TextEdit" parent="Contain"]
+custom_minimum_size = Vector2(0, 40)
+layout_direction = 3
+layout_mode = 2
+
+[connection signal="pressed" from="Contain/Button" to="." method="_on_button_pressed"]

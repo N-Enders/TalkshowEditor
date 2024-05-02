@@ -3,11 +3,12 @@ extends Control
 @export var label: PackedScene
 @export var goto: PackedScene
 @export var input: PackedScene
+@export var reference: PackedScene
+
 
 var initialPos = Vector2(40,40)
 var node_index = 0
 var select_all_nodes = false
-
 
 
 # Called when the node enters the scene tree for the first time.
@@ -23,7 +24,10 @@ func _process(delta):
 
 
 func _on_button_pressed():
+	
 	var node
+	var id = getNextID()
+	
 	match $OptionButton.selected:
 		0:
 			node = label.instantiate()
@@ -33,7 +37,14 @@ func _on_button_pressed():
 			node.createBranch("2")
 			node.remove_branch.connect(_remove_branch)
 			node.add_branch.connect(_add_branch)
+		2:
+			node = reference.instantiate()
+			node.loadData({"id":id,"var":"","data":[],"location":Vector2(0,0)})
+			node.remove_branch.connect(_remove_branch)
+			node.add_branch.connect(_add_branch)
 	node.position_offset += initialPos + (node_index * Vector2(10,10))
+	node.node_selected.connect(_on_node_selected.bind(node))
+	node.node_deselected.connect(_on_node_deselected.bind(node))
 	$GraphEdit.add_child(node)
 	node_index += 1
 
@@ -186,3 +197,43 @@ func _add_branch(node):
 		if(a["from_port"] == (no_match-1)):
 			$GraphEdit.disconnect_node(a["from_node"],a["from_port"],a["to_node"],a["to_port"])
 			$GraphEdit.connect_node(a["from_node"],a["from_port"] + 1,a["to_node"],a["to_port"])
+
+
+func _on_import_flow_pressed():
+	pass # Replace with function body.
+
+
+func getNextID():
+	var currentID = 0
+	for a in $GraphEdit.get_children():
+		var nextId = a.getID()
+		if nextId >= currentID:
+			currentID = nextId + 1
+	return currentID
+
+
+func _on_graph_edit_delete_nodes_request(nodes):
+	$ConfirmationDialog.show()
+
+
+
+var selected_nodes = {}
+
+func _on_node_selected(node):
+	selected_nodes[node] = true
+
+func _on_node_deselected(node):
+	selected_nodes[node] = false
+
+func _on_confirmation_dialog_confirmed():
+	for node in selected_nodes.keys():
+		if selected_nodes[node]:
+			remove_connections_to_node(node)
+			node.queue_free()
+	selected_nodes = {}
+
+func remove_connections_to_node(node):
+	for con in $GraphEdit.get_connection_list():
+		if con.to_node == node.name or con.from_node == node.name:
+			$GraphEdit.disconnect_node(con.from_node, con.from_port, con.to_node, con.to_port)
+
