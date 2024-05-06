@@ -13,7 +13,7 @@ var select_all_nodes = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
+	$GraphEdit.add_valid_left_disconnect_type(0)
 
 
 

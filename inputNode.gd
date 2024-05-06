@@ -26,6 +26,26 @@ func createBranch(value):
 func _on_add_normal_branch_pressed():
 	createBranch("")
 
+
+
+
+func _deleted_option(option):
+	var num = get_children().find(option,0)
+	remove_child(option)
+	set_slot(get_child_count()-1,false,0,Color.WHITE,false,0,Color.RED)
+	remove_branch.emit(self,num)
+
+func no_match_idx():
+	return get_child_count() - 4
+
+
+
+func setID(id):
+	$cellDetails/VBoxContainer/CellID.text = str(id)
+
+func getID():
+	return int($cellDetails/VBoxContainer/CellID.text)
+
 func getData():
 	var index = 0
 	var returnValue = {"type":"input","data":{}}
@@ -37,13 +57,3 @@ func getData():
 		elif children[index].name == "No Match Branch":
 			returnValue["data"][index] = "NoMatch"
 	return returnValue
-
-
-func _deleted_option(option):
-	var num = get_children().find(option,0)
-	remove_child(option)
-	set_slot(get_child_count()-1,false,0,Color.WHITE,false,0,Color.RED)
-	remove_branch.emit(self,num)
-
-func no_match_idx():
-	return get_child_count() - 3

@@ -11,18 +11,25 @@ func _process(delta):
 func selectNode():
 	selected = true
 
+
+func setID(id):
+	$cellDetails/VBoxContainer/CellID.text = str(id)
+
 func getID():
-	return 0
+	return int($cellDetails/VBoxContainer/CellID.text)
+
 
 func getData():
 	return {
 				"type":"label",
-				"labelValue":$TextEdit.text, 
-				"position": 
-					{"x": position_offset.x , 
-					"y": position_offset.y }
+				"id": getID(),
+				"position": position_offset,
+				"data":{
+					"labelValue":$TextEdit.text
+				}
 			}
 
-func loadValues(dict):
-	$TextEdit.text = dict["labelValue"]
-	position_offset = Vector2(dict["x"],dict["y"])
+func loadData(dict):
+	$TextEdit.text = dict["data"]["labelValue"]
+	position_offset = dict["position"]
+	setID(dict["id"])

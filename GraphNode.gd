@@ -45,8 +45,10 @@ func _branch_deleted(branch):
 	remove_child(branch)
 
 
+
 func getData():
 	return {"type":"hitlist","id":getID(),"list":getHitlist()}
+
 
 
 func getHitlist():
@@ -57,9 +59,13 @@ func getHitlist():
 	return values
 
 
+
 func _on_add_text_pressed():
 	createText("")
 
 
+
 func _on_delete_button_pressed():
 	delete.emit()
+
+

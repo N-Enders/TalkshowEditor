@@ -39,7 +39,7 @@ func createHitlistBranch(details):
 ############
 func getData():
 	var index = 0
-	var returnValue = {"type":"reference","data":{},"location":position_offset}
+	var returnValue = {"type":"reference","id":getID(),"data":{},"location":position_offset}
 	var children = get_children()
 	while index < len(children) - 1:
 		index += 1
