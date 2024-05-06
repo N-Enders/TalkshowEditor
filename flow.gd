@@ -6,9 +6,11 @@ extends Control
 @export var reference: PackedScene
 
 
+
 var initialPos = Vector2(40,40)
 var node_index = 0
 var select_all_nodes = false
+
 
 
 # Called when the node enters the scene tree for the first time.
@@ -31,6 +33,7 @@ func _on_button_pressed():
 	match $OptionButton.selected:
 		0:
 			node = label.instantiate()
+			node.loadData({"id":id,"position":Vector2(0,0),"data":{"labelValue":""}})
 		1:
 			node = input.instantiate()
 			node.createBranch("1")

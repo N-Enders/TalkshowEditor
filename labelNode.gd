@@ -29,6 +29,7 @@ func getData():
 				}
 			}
 
+#{"type":"label","id":0,"position":Vector2(0,0),"data":{"labelValue":""}}
 func loadData(dict):
 	$TextEdit.text = dict["data"]["labelValue"]
 	position_offset = dict["position"]
