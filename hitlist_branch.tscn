@@ -57,11 +57,24 @@ slot/4/draw_stylebox = true
 script = ExtResource("1_oaexx")
 editableText = ExtResource("2_dju4e")
 
-[node name="DeleteButton" type="Button" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="DeleteButton" type="Button" parent="HBoxContainer"]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 size_flags_horizontal = 0
 text = "Delete"
+
+[node name="MoveUp" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+disabled = true
+text = "⮝"
+
+[node name="MoveDown" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+disabled = true
+text = "⮟"
 
 [node name="IdLabel" type="Label" parent="."]
 layout_mode = 2
@@ -81,5 +94,7 @@ custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 text = "Add text"
 
-[connection signal="pressed" from="DeleteButton" to="." method="_on_delete_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/DeleteButton" to="." method="_on_delete_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/MoveUp" to="." method="_on_move_up_pressed"]
+[connection signal="pressed" from="HBoxContainer/MoveDown" to="." method="_on_move_down_pressed"]
 [connection signal="pressed" from="addText" to="." method="_on_add_text_pressed"]

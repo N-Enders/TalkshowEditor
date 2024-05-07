@@ -5,6 +5,7 @@ extends GraphNode
 
 signal add_branch
 signal remove_branch
+signal moved_branch
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -21,7 +22,9 @@ func createCodeBranch(details):
 	add_child(newCode)
 	move_child(newCode,branches)
 	set_slot(branches + 1,false,0,Color.WHITE,true,0,Color.RED)
+	update_branch_states()
 	newCode.delete.connect(_deleted_option.bind(newCode))
+	newCode.moved.connect(_move_branch)
 	add_branch.emit(self)
 
 func createHitlistBranch(details):
@@ -31,12 +34,12 @@ func createHitlistBranch(details):
 	add_child(newHitlist)
 	move_child(newHitlist,branches)
 	set_slot(branches + 1,false,0,Color.WHITE,true,0,Color.RED)
+	update_branch_states()
 	newHitlist.delete.connect(_deleted_option.bind(newHitlist))
+	newHitlist.moved.connect(_move_branch)
 	add_branch.emit(self)
 
-############
-############ REDO
-############
+
 func getData():
 	var index = 0
 	var returnValue = {"type":"reference","id":getID(),"data":{},"location":position_offset}
@@ -53,9 +56,33 @@ func getData():
 func _deleted_option(option):
 	var num = get_children().find(option,0)
 	remove_child(option)
+	update_branch_states()
 	set_slot(get_child_count()-3,false,0,Color.WHITE,false,0,Color.RED)
 	remove_branch.emit(self,num)
 	size.y = 0
+
+func _move_branch(branch,direction):
+	var currentChildLocation = get_children().find(branch,0)
+	var newChildLocation = currentChildLocation + direction
+	move_child(branch,newChildLocation)
+	moved_branch.emit(self,currentChildLocation,newChildLocation)
+	update_branch_states()
+
+func update_branch_states():
+	var children = get_children()
+	if((len(children)-5) <= 1):
+		if((len(children)-5) == 1):
+			children[1].setMoveState("disabled")
+		return
+	var lastIdx = len(children)-5
+	for a in range(1,lastIdx + 1):
+		match a:
+			1:
+				children[a].setMoveState("first")
+			lastIdx:
+				children[a].setMoveState("last")
+			_:
+				children[a].setMoveState("middle")
 
 func no_match_idx():
 	return get_child_count() - 4

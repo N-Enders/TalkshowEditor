@@ -45,6 +45,8 @@ func _on_button_pressed():
 			node.loadData({"id":id,"var":"","data":[],"location":Vector2(0,0)})
 			node.remove_branch.connect(_remove_branch)
 			node.add_branch.connect(_add_branch)
+			node.moved_branch.connect(_branch_moved)
+	
 	node.position_offset += initialPos + (node_index * Vector2(10,10))
 	node.node_selected.connect(_on_node_selected.bind(node))
 	node.node_deselected.connect(_on_node_deselected.bind(node))
@@ -206,7 +208,7 @@ func _on_import_flow_pressed():
 
 
 func getNextID():
-	var currentID = 0
+	var currentID = 1
 	for a in $GraphEdit.get_children():
 		var nextId = a.getID()
 		if nextId >= currentID:
@@ -239,3 +241,25 @@ func remove_connections_to_node(node):
 		if con.to_node == node.name or con.from_node == node.name:
 			$GraphEdit.disconnect_node(con.from_node, con.from_port, con.to_node, con.to_port)
 
+func _branch_moved(node,oldPort,newPort):
+	var oldPortConnection
+	var newPortConnection
+	oldPort -= 1
+	newPort -= 1
+	for con in $GraphEdit.get_connection_list():
+		if con.from_node == node.name:
+			print(con.from_port)
+			print(con.from_node)
+			print(str(oldPort)+" old port")
+			print(str(newPort)+" new port")
+			match con.from_port:
+				oldPort:
+					oldPortConnection = con
+					$GraphEdit.disconnect_node(con.from_node, con.from_port, con.to_node, con.to_port)
+				newPort:
+					newPortConnection = con
+					$GraphEdit.disconnect_node(con.from_node, con.from_port, con.to_node, con.to_port)
+	if(oldPortConnection):
+		$GraphEdit.connect_node(node.name, newPort, oldPortConnection.to_node, oldPortConnection.to_port) #old to new
+	if(newPortConnection):
+		$GraphEdit.connect_node(node.name, oldPort, newPortConnection.to_node, newPortConnection.to_port) #new to old
