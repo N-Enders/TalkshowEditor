@@ -14,9 +14,23 @@ func selectNode():
 
 func setID(id):
 	$cellDetails/VBoxContainer/CellID.text = str(id)
+	return id
 
 func getID():
-	return int($cellDetails/VBoxContainer/CellID.text)
+	var regex = RegEx.new()
+	regex.compile("/[^\\d+]/g")
+	var idVal = regex.sub($cellDetails/VBoxContainer/CellID.text,"")
+	if idVal == "":
+		return -1
+	return setID(int(idVal))
+
+
+
+func setLabel(label):
+	$cellDetails/VBoxContainer/labelBox.text = label
+
+func getLabel():
+	return $cellDetails/VBoxContainer/labelBox.text
 
 
 func getData():
@@ -25,12 +39,33 @@ func getData():
 				"id": getID(),
 				"position": position_offset,
 				"data":{
-					"labelValue":$TextEdit.text
+					"labelValue":getLabel()
 				}
 			}
 
 #{"type":"label","id":0,"position":Vector2(0,0),"data":{"labelValue":""}}
 func loadData(dict):
-	$TextEdit.text = dict["data"]["labelValue"]
+	setLabel(dict["data"]["labelValue"])
 	position_offset = dict["position"]
 	setID(dict["id"])
+
+func getDictLocation(dict,value):
+	if value in dict:
+		return {"dict":dict,"location":dict.find(value)}
+	dict.append(value)
+	return {"dict":dict,"location":dict.find(value)}
+
+func toCellData(cellConnections):
+	var datas = []
+	var dict = []
+	var dictLoc = getDictLocation(dict,getLabel())
+	dict = dictLoc["dict"]
+	datas.append(str(getID()))
+	datas.append("[[DictValue#"+dictLoc["location"]+"]]")
+	datas.append("L")
+	datas.append(cellConnections[0]["cellID"])
+	return {"data":"|".join(datas),"dict":dict}
+
+func canCompile():
+	pass
+
