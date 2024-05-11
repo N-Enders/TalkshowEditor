@@ -107,9 +107,15 @@ func _on_add_hit_list_branch_pressed():
 
 func setID(id):
 	$cellDetails/VBoxContainer/CellID.text = str(id)
+	return id
 
 func getID():
-	return int($cellDetails/VBoxContainer/CellID.text)
+	var regex = RegEx.new()
+	regex.compile("/[^\\d+]/g")
+	var idVal = regex.sub($cellDetails/VBoxContainer/CellID.text,"")
+	if idVal == "":
+		return -1
+	return setID(int(idVal))
 
 func setVar(varname):
 	$cellDetails/VBoxContainer/varName.text = varname

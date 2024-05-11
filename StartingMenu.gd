@@ -2,6 +2,8 @@ extends Control
 
 var wait = 0
 
+signal data_recieved
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	setNewMenuVisible(false)
@@ -44,17 +46,20 @@ func _on_new_pressed():
 
 
 func _on_newmenucode_text_changed():
+	pass
 	var text = $newmenucode.text
-	var list = text.split('\n')
-	if list[0] == "package":
+	if "ExportMainqtqte3q" in text:
+		var list = text.split('\n')
 		$LoadingLabel.setDetails("Creating a new project")
-		list.reverse()
-		decompStart(list)
 		setLoadingVisible(true)
 		setNewMenuVisible(false)
 		setMainMenuVisible(false)
+		list.reverse()
+		data_recieved.emit(await decompStart(list))
+		$LoadingLabel.setDetails("Project decompiled")
 	else:
-		$newmenucode.text = ""
+		var test = text.split('\n')
+		$newmenucode.text = str(test)
 		$newmenulabel.text = "Paste entire \"ExportMain\" class from start.swf (invalid class)"
 
 
@@ -79,23 +84,28 @@ func waitTime():
 
 
 
+
 func decompStart(start):
 	var startData = {}
 	var preData = {}
 	for a in start:
 		if "=" in a:
-			var line = a.split("=")
+			print(a)
+			var pos = a.find("=")
+			var line = [a.substr(0,pos),a.substr(pos+1)]
 			var type = line[0].strip_edges().split(' ')[2].split(":")
 			var dataType = type[1]
 			type = type[0]
 			line.remove_at(0)
 			var data = "=".join(line).strip_edges().split(';')[0]
 			preData[type] = getDataType(data,dataType)
+			if type == "dict":
+				print(len(preData[type]))
 	
 	
-	var dict = preData["dict"].split("^")
+	startData["dict"] = preData["dict"].split("^")
 	preData.erase("dict")
-	startData["dict"] = preData["f"]
+	var dict = Array(startData["dict"])
 	startData["startingFlowchart"] = preData["f"]
 	preData.erase("f")
 	startData["startingCell"] = preData["c"]
@@ -108,7 +118,7 @@ func decompStart(start):
 	preData.erase("childsubroutines")
 	startData["childtemplates"] = preData["childtemplates"]
 	preData.erase("childtemplates")
-	$LoadingLabel.setDetails("Parsing data for " + dict[startData["workspaceName"]])
+	$LoadingLabel.setDetails("Parsing data for " + dict[int(startData["workspaceName"])])
 	startData["timeStamp"] = preData["timeStamp"]
 	preData.erase("timeStamp")
 	
@@ -116,11 +126,12 @@ func decompStart(start):
 	$LoadingLabel.setDetails(dict[startData["workspaceName"]] + " parsing projects")
 	startData["projects"] = {}
 	for a in preData["projects"].split("^"):
-		await waitTime()
-		var splitData = Array(a.split("|"))
-		var projName = int(splitData[1])
-		var projId = splitData[0]
-		startData["projects"][projId] = {"id":projId,"name":projName}
+		if a != "":
+			await waitTime()
+			var splitData = Array(a.split("|"))
+			var projName = int(splitData[1])
+			var projId = splitData[0]
+			startData["projects"][projId] = {"id":projId,"name":projName}
 	preData.erase("projects")
 	
 	$LoadingLabel.setDetails(dict[startData["workspaceName"]] + " parsing packages")
@@ -191,44 +202,45 @@ func decompStart(start):
 	
 	$LoadingLabel.setDetails(dict[startData["workspaceName"]] + " parsing templates")
 	startData["templates"] = {}
-	for a in preData["templates"].split("^"):
-		await waitTime()
-		var splitData = Array(a.split("|"))
-		var tempId = splitData.pop_front()
-		var tempParent = int(splitData.pop_front())
-		var tempName = int(splitData.pop_front())
-		var params = []
-		for b in splitData.pop_front().split("!"):
-			params.append(int(b))
-		var fields = {}
-		for b in splitData.pop_front().split("!"):
-			var fieldData = Array(b.split(","))
-			var fieldId = fieldData.pop_front()
-			var fieldName = int(fieldData.pop_front())
-			var fieldType
-			var defaultVal
-			match fieldData.pop_front():
-				"A":
-					fieldType = "Audio"
-					defaultVal = fieldData.pop_front()
-				"B":
-					fieldType = "Boolean"
-					defaultVal = int(fieldData.pop_front())
-				"G":
-					fieldType = "Graphic"
-					defaultVal = fieldData.pop_front()
-				"N":
-					fieldType = "Number"
-					defaultVal = int(fieldData.pop_front())
-				"S":
-					fieldType = "String"
-					defaultVal = int(fieldData.pop_front())
-			var variable = fieldData.pop_front()
-			if (variable == ""):
-				variable = "0"
-			variable = int(variable)
-			fields[fieldId] = {"id": fieldId, "name":fieldName, "type": fieldType, "defaultValue": defaultVal, "variable": variable}
-		startData["templates"][tempId] = {"id": tempId, "name": tempName, "projectParent": tempParent, "params": params, "fields": fields}
+	if preData["templates"].split("^")[0] != "":
+		for a in preData["templates"].split("^"):
+			await waitTime()
+			var splitData = Array(a.split("|"))
+			var tempId = splitData.pop_front()
+			var tempParent = int(splitData.pop_front())
+			var tempName = int(splitData.pop_front())
+			var params = []
+			for b in splitData.pop_front().split("!"):
+				params.append(int(b))
+			var fields = {}
+			for b in splitData.pop_front().split("!"):
+				var fieldData = Array(b.split(","))
+				var fieldId = fieldData.pop_front()
+				var fieldName = int(fieldData.pop_front())
+				var fieldType
+				var defaultVal
+				match fieldData.pop_front():
+					"A":
+						fieldType = "Audio"
+						defaultVal = fieldData.pop_front()
+					"B":
+						fieldType = "Boolean"
+						defaultVal = int(fieldData.pop_front())
+					"G":
+						fieldType = "Graphic"
+						defaultVal = fieldData.pop_front()
+					"N":
+						fieldType = "Number"
+						defaultVal = int(fieldData.pop_front())
+					"S":
+						fieldType = "String"
+						defaultVal = int(fieldData.pop_front())
+				var variable = fieldData.pop_front()
+				if (variable == ""):
+					variable = "0"
+				variable = int(variable)
+				fields[fieldId] = {"id": fieldId, "name":fieldName, "type": fieldType, "defaultValue": defaultVal, "variable": variable}
+			startData["templates"][tempId] = {"id": tempId, "name": tempName, "projectParent": tempParent, "params": params, "fields": fields}
 	preData.erase("templates")
 	
 	$LoadingLabel.setDetails(dict[startData["workspaceName"]] + " parsing media")

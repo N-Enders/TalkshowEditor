@@ -77,6 +77,15 @@ theme_override_constants/margin_right = 5
 [node name="VBoxContainer" type="VBoxContainer" parent="cellDetails"]
 layout_mode = 2
 
+[node name="labelLabel" type="Label" parent="cellDetails/VBoxContainer"]
+layout_mode = 2
+text = "Label"
+
+[node name="labelBox" type="TextEdit" parent="cellDetails/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+placeholder_text = "No Label"
+
 [node name="idLabel" type="Label" parent="cellDetails/VBoxContainer"]
 layout_mode = 2
 text = "Cell ID"

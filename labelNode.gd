@@ -21,7 +21,7 @@ func getID():
 	regex.compile("/[^\\d+]/g")
 	var idVal = regex.sub($cellDetails/VBoxContainer/CellID.text,"")
 	if idVal == "":
-		return -1
+		return 0
 	return setID(int(idVal))
 
 
@@ -63,9 +63,22 @@ func toCellData(cellConnections):
 	datas.append(str(getID()))
 	datas.append("[[DictValue#"+dictLoc["location"]+"]]")
 	datas.append("L")
+	var childId = 0
+	if 0 in cellConnections:
+		childId = cellConnections[0]["cellID"]
 	datas.append(cellConnections[0]["cellID"])
 	return {"data":"|".join(datas),"dict":dict}
 
+func fromCellData(cellData, dict):
+	var datas = cellData.split("|")
+	setID(datas.pop_front())
+	setLabel(dict[int(datas.pop_front())])
+	datas.pop_front()
+	return {"connections":[{"from_port":0,"to_cell":datas.pop_front()}]}
+
+
 func canCompile():
-	pass
+	if not getID() > 0:
+		return {"reasons":["Id must be greater than 0"]}
+	return {"reasons":[]}
 

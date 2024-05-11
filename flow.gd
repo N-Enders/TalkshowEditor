@@ -11,12 +11,16 @@ var initialPos = Vector2(40,40)
 var node_index = 0
 var select_all_nodes = false
 
+var start_data
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	$GraphEdit.add_valid_left_disconnect_type(0)
 
+
+func add_data(data):
+	start_data = data
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
