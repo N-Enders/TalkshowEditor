@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://t6o0x2m2jp62"]
+[gd_scene load_steps=4 format=3 uid="uid://t6o0x2m2jp62"]
 
 [ext_resource type="Script" path="res://inputNode.gd" id="1_tw8fp"]
-[ext_resource type="PackedScene" uid="uid://c5vvqw8iapgqb" path="res://textEdit.tscn" id="2_fi8w5"]
+[ext_resource type="PackedScene" uid="uid://7nmvaovuiyb8" path="res://mc_fib_branch.tscn" id="2_rrfwu"]
+[ext_resource type="PackedScene" uid="uid://x4au8oikxqoy" path="res://timeout_branch.tscn" id="3_k6vog"]
 
 [node name="GraphNode" type="GraphNode"]
 offset_right = 448.0
@@ -43,8 +44,18 @@ slot/3/right_type = 0
 slot/3/right_color = Color(1, 1, 1, 1)
 slot/3/right_icon = null
 slot/3/draw_stylebox = true
+slot/4/left_enabled = false
+slot/4/left_type = 0
+slot/4/left_color = Color(1, 1, 1, 1)
+slot/4/left_icon = null
+slot/4/right_enabled = false
+slot/4/right_type = 0
+slot/4/right_color = Color(1, 1, 1, 1)
+slot/4/right_icon = null
+slot/4/draw_stylebox = true
 script = ExtResource("1_tw8fp")
-editableText = ExtResource("2_fi8w5")
+McFibBranch = ExtResource("2_rrfwu")
+TimeoutBranch = ExtResource("3_k6vog")
 
 [node name="Connection" type="Container" parent="."]
 layout_mode = 2
@@ -66,7 +77,12 @@ vertical_alignment = 1
 [node name="addNormalBranch" type="Button" parent="."]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-text = "Add branch"
+text = "Add MC / Fib branch"
+
+[node name="addTimeoutBranch" type="Button" parent="."]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "Add timeout branch (Max 1)"
 
 [node name="cellDetails" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -96,3 +112,4 @@ layout_mode = 2
 placeholder_text = "Cell ID (cannot compile without)"
 
 [connection signal="pressed" from="addNormalBranch" to="." method="_on_add_normal_branch_pressed"]
+[connection signal="pressed" from="addTimeoutBranch" to="." method="_on_add_timeout_branch_pressed"]

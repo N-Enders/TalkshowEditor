@@ -1,13 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://7nmvaovuiyb8"]
+[gd_scene load_steps=2 format=3 uid="uid://x4au8oikxqoy"]
 
-[ext_resource type="Script" path="res://mc_fib_branch.gd" id="1_vb22o"]
+[ext_resource type="Script" path="res://TimeoutBranch.gd" id="1_cbjww"]
 
-[node name="MCFib" type="GraphNode"]
-offset_right = 9.0
-offset_bottom = 55.0
-draggable = false
-selectable = false
-title = "MC / Fib Branch"
+[node name="TimeoutBranch" type="GraphNode"]
+offset_right = 40.0
+offset_bottom = 40.0
 slot/0/left_enabled = false
 slot/0/left_type = 0
 slot/0/left_color = Color(1, 1, 1, 1)
@@ -62,7 +59,7 @@ slot/5/right_type = 0
 slot/5/right_color = Color(1, 1, 1, 1)
 slot/5/right_icon = null
 slot/5/draw_stylebox = true
-script = ExtResource("1_vb22o")
+script = ExtResource("1_cbjww")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
@@ -73,42 +70,18 @@ layout_mode = 2
 size_flags_horizontal = 0
 text = "Delete"
 
-[node name="MoveUp" type="Button" parent="HBoxContainer"]
+[node name="StartTimer" type="CheckButton" parent="."]
 layout_mode = 2
-size_flags_horizontal = 8
-disabled = true
-text = "⮝"
+text = "Start Timer"
 
-[node name="MoveDown" type="Button" parent="HBoxContainer"]
+[node name="TimerLabel" type="Label" parent="."]
 layout_mode = 2
-size_flags_horizontal = 8
-disabled = true
-text = "⮟"
+text = "Time"
 
-[node name="mcFibContainer" type="HBoxContainer" parent="."]
-layout_mode = 2
-size_flags_horizontal = 8
-
-[node name="MC" type="Label" parent="mcFibContainer"]
-layout_mode = 2
-text = "Mc"
-horizontal_alignment = 2
-
-[node name="McFibCheck" type="CheckButton" parent="mcFibContainer"]
-layout_mode = 2
-
-[node name="Fib" type="Label" parent="mcFibContainer"]
-layout_mode = 2
-text = "Fib"
-
-[node name="InputLabel" type="Label" parent="."]
-layout_mode = 2
-text = "Input String"
-
-[node name="InputEdit" type="TextEdit" parent="."]
+[node name="TimerText" type="TextEdit" parent="."]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-placeholder_text = "Input"
+placeholder_text = "Float Number"
 
 [node name="IdLabel" type="Label" parent="."]
 layout_mode = 2
@@ -120,5 +93,3 @@ layout_mode = 2
 placeholder_text = "Branch ID"
 
 [connection signal="pressed" from="HBoxContainer/DeleteButton" to="." method="_on_delete_button_pressed"]
-[connection signal="pressed" from="HBoxContainer/MoveUp" to="." method="_on_move_up_pressed"]
-[connection signal="pressed" from="HBoxContainer/MoveDown" to="." method="_on_move_down_pressed"]

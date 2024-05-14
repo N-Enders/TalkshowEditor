@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://bdkp44aslledp"]
+[gd_scene load_steps=2 format=3 uid="uid://bdkp44aslledp"]
 
 [ext_resource type="Script" path="res://GraphNode.gd" id="1_oaexx"]
-[ext_resource type="PackedScene" uid="uid://c5vvqw8iapgqb" path="res://textEdit.tscn" id="2_dju4e"]
 
 [node name="GraphNode" type="GraphNode"]
 offset_right = 9.0
@@ -55,7 +54,6 @@ slot/4/right_color = Color(1, 1, 1, 1)
 slot/4/right_icon = null
 slot/4/draw_stylebox = true
 script = ExtResource("1_oaexx")
-editableText = ExtResource("2_dju4e")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 2

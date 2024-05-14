@@ -48,18 +48,24 @@ func _on_new_pressed():
 func _on_newmenucode_text_changed():
 	pass
 	var text = $newmenucode.text
-	if "ExportMainqtqte3q" in text:
+	if "ExportMain" in text:
 		var list = text.split('\n')
+		for a in list:
+			if len(a) >= 900000:
+				$newmenucode.text = ""
+				$newmenulabel.text = "Paste entire \"ExportMain\" class from start.swf (class excedes limits)"
+				return
 		$LoadingLabel.setDetails("Creating a new project")
 		setLoadingVisible(true)
 		setNewMenuVisible(false)
 		setMainMenuVisible(false)
 		list.reverse()
-		data_recieved.emit(await decompStart(list))
+		
+		data_recieved.emit({"startData":await decompStart(list),"flows":[]})
+		
 		$LoadingLabel.setDetails("Project decompiled")
 	else:
-		var test = text.split('\n')
-		$newmenucode.text = str(test)
+		$newmenucode.text = ""
 		$newmenulabel.text = "Paste entire \"ExportMain\" class from start.swf (invalid class)"
 
 
@@ -90,7 +96,6 @@ func decompStart(start):
 	var preData = {}
 	for a in start:
 		if "=" in a:
-			print(a)
 			var pos = a.find("=")
 			var line = [a.substr(0,pos),a.substr(pos+1)]
 			var type = line[0].strip_edges().split(' ')[2].split(":")
@@ -99,8 +104,6 @@ func decompStart(start):
 			line.remove_at(0)
 			var data = "=".join(line).strip_edges().split(';')[0]
 			preData[type] = getDataType(data,dataType)
-			if type == "dict":
-				print(len(preData[type]))
 	
 	
 	startData["dict"] = preData["dict"].split("^")

@@ -5,6 +5,8 @@
 [node name="codeBranch" type="GraphNode"]
 offset_right = 9.0
 offset_bottom = 55.0
+draggable = false
+selectable = false
 title = "Code Branch"
 slot/0/left_enabled = false
 slot/0/left_type = 0

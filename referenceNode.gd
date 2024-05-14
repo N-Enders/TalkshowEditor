@@ -25,7 +25,7 @@ func createCodeBranch(details):
 	update_branch_states()
 	newCode.delete.connect(_deleted_option.bind(newCode))
 	newCode.moved.connect(_move_branch)
-	add_branch.emit(self)
+	add_branch.emit(self,no_match_idx())
 
 func createHitlistBranch(details):
 	var branches = get_child_count() - 4
@@ -37,7 +37,7 @@ func createHitlistBranch(details):
 	update_branch_states()
 	newHitlist.delete.connect(_deleted_option.bind(newHitlist))
 	newHitlist.moved.connect(_move_branch)
-	add_branch.emit(self)
+	add_branch.emit(self,no_match_idx())
 
 
 func getData():
@@ -85,7 +85,7 @@ func update_branch_states():
 				children[a].setMoveState("middle")
 
 func no_match_idx():
-	return get_child_count() - 4
+	return get_child_count() - 5
 
 func getNextBranchID():
 	var id = 1;

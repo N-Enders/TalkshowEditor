@@ -15,16 +15,22 @@ func _process(delta):
 	pass
 
 
-func setId(id):
+func setID(id):
 	$BranchID.text = str(id)
+	return id
 
 
 func getID():
-	return int($BranchID.text)
+	var regex = RegEx.new()
+	regex.compile("/[^\\d+]/g")
+	var idVal = regex.sub($BranchID.text,"")
+	if idVal == "":
+		return -1
+	return setID(int(idVal))
 
 
 func loadHitList(data):
-	setId(data["id"])
+	setID(data["id"])
 	for a in data["list"]:
 		createText(a)
 

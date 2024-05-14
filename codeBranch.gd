@@ -14,14 +14,23 @@ func _process(delta):
 
 
 func setBranchId(newId):
-	$Id.text = newId
+	$Id.text = str(newId)
+	return newId
 
 func getID():
-	return int($Id.text)
+	var regex = RegEx.new()
+	regex.compile("/[^\\d+]/g")
+	var idVal = regex.sub($Id.text,"")
+	if idVal == "":
+		return -1
+	return setBranchId(int(idVal))
 
 func getData():
 	return {"type":"code","id":getID()}
 
+
+func loadData(data):
+	setBranchId(data["id"])
 
 func _on_delete_button_pressed():
 	delete.emit()
