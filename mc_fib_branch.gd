@@ -89,3 +89,4 @@ func loadData(data):
 	setID(data["id"])
 	setInputText(data["input"])
 	setMcFibType(data["FibMCType"])
+

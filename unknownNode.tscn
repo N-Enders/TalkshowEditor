@@ -1,0 +1,84 @@
+[gd_scene load_steps=3 format=3 uid="uid://cwhur2udbumum"]
+
+[ext_resource type="Script" path="res://unknownNode.gd" id="1_3xqip"]
+[ext_resource type="PackedScene" uid="uid://c5vvqw8iapgqb" path="res://textEdit.tscn" id="2_swkh2"]
+
+[node name="GraphNode" type="GraphNode"]
+offset_right = 448.0
+offset_bottom = 95.0
+title = "Unknown Node"
+slot/0/left_enabled = true
+slot/0/left_type = 0
+slot/0/left_color = Color(1, 1, 1, 1)
+slot/0/left_icon = null
+slot/0/right_enabled = true
+slot/0/right_type = 0
+slot/0/right_color = Color(1, 0, 0, 1)
+slot/0/right_icon = null
+slot/0/draw_stylebox = true
+slot/1/left_enabled = false
+slot/1/left_type = 0
+slot/1/left_color = Color(1, 1, 1, 1)
+slot/1/left_icon = null
+slot/1/right_enabled = false
+slot/1/right_type = 0
+slot/1/right_color = Color(1, 1, 1, 1)
+slot/1/right_icon = null
+slot/1/draw_stylebox = true
+slot/2/left_enabled = false
+slot/2/left_type = 0
+slot/2/left_color = Color(1, 1, 1, 1)
+slot/2/left_icon = null
+slot/2/right_enabled = false
+slot/2/right_type = 0
+slot/2/right_color = Color(1, 1, 1, 1)
+slot/2/right_icon = null
+slot/2/draw_stylebox = true
+script = ExtResource("1_3xqip")
+editableText = ExtResource("2_swkh2")
+
+[node name="Connection" type="Container" parent="."]
+layout_mode = 2
+
+[node name="newData" type="Button" parent="."]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "Create New Data"
+
+[node name="cellDetails" type="MarginContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_right = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="cellDetails"]
+layout_mode = 2
+
+[node name="labelLabel" type="Label" parent="cellDetails/VBoxContainer"]
+layout_mode = 2
+text = "Label"
+
+[node name="labelBox" type="TextEdit" parent="cellDetails/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+placeholder_text = "Empty Label"
+
+[node name="idLabel" type="Label" parent="cellDetails/VBoxContainer"]
+layout_mode = 2
+text = "Cell ID"
+
+[node name="CellID" type="TextEdit" parent="cellDetails/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+placeholder_text = "Cell ID (cannot compile without)"
+
+[node name="cellType" type="Label" parent="cellDetails/VBoxContainer"]
+layout_mode = 2
+text = "Cell Type"
+
+[node name="cellTypeBox" type="TextEdit" parent="cellDetails/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+placeholder_text = "no type"
+
+[connection signal="pressed" from="newData" to="." method="_on_new_data_pressed"]

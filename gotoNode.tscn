@@ -1,10 +1,27 @@
-[gd_scene load_steps=2 format=3 uid="uid://ctcf0cie727e3"]
+[gd_scene load_steps=4 format=3 uid="uid://ctcf0cie727e3"]
 
 [ext_resource type="Script" path="res://gotoNode.gd" id="1_sxy0t"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_elcfv"]
+content_margin_left = 18.0
+content_margin_top = 12.0
+content_margin_right = 18.0
+content_margin_bottom = 12.0
+bg_color = Color(0.866667, 0.47451, 0, 0.6)
+border_color = Color(0.325, 0.325, 0.325, 0.6)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
+
+[sub_resource type="Theme" id="Theme_baunn"]
+GraphNode/styles/panel = SubResource("StyleBoxFlat_elcfv")
+
 [node name="GraphNode" type="GraphNode"]
 offset_right = 448.0
-offset_bottom = 95.0
+offset_bottom = 297.0
+theme = SubResource("Theme_baunn")
 title = "Goto Node"
 slot/0/left_enabled = true
 slot/0/left_type = 0
@@ -33,6 +50,15 @@ slot/2/right_type = 0
 slot/2/right_color = Color(1, 1, 1, 1)
 slot/2/right_icon = null
 slot/2/draw_stylebox = true
+slot/3/left_enabled = false
+slot/3/left_type = 0
+slot/3/left_color = Color(1, 1, 1, 1)
+slot/3/left_icon = null
+slot/3/right_enabled = false
+slot/3/right_type = 0
+slot/3/right_color = Color(1, 1, 1, 1)
+slot/3/right_icon = null
+slot/3/draw_stylebox = true
 script = ExtResource("1_sxy0t")
 
 [node name="Connection" type="Container" parent="."]
@@ -43,23 +69,61 @@ layout_mode = 2
 text = "Cell in current flowchart"
 alignment = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
-modulate = Color(0.364706, 0.364706, 0.364706, 1)
+[node name="ConnectingData" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer"]
+[node name="Flowchart" type="VBoxContainer" parent="ConnectingData"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="ConnectingData/Flowchart"]
 layout_mode = 2
 text = "Flowchart ID"
 
-[node name="OptionButton" type="OptionButton" parent="VBoxContainer"]
+[node name="TextEdit" type="TextEdit" parent="ConnectingData/Flowchart"]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
+text = "tes"
 
-[node name="Label2" type="Label" parent="VBoxContainer"]
+[node name="Cell" type="VBoxContainer" parent="ConnectingData"]
 layout_mode = 2
-text = "
-Cell ID"
+size_flags_horizontal = 3
 
-[node name="TextEdit" type="TextEdit" parent="VBoxContainer"]
+[node name="Label" type="Label" parent="ConnectingData/Cell"]
+layout_mode = 2
+text = "Cell ID"
+
+[node name="TextEdit" type="TextEdit" parent="ConnectingData/Cell"]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
+text = "tes"
+
+[node name="cellDetails" type="MarginContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_right = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="cellDetails"]
+layout_mode = 2
+
+[node name="labelLabel" type="Label" parent="cellDetails/VBoxContainer"]
+layout_mode = 2
+text = "Label"
+
+[node name="labelBox" type="TextEdit" parent="cellDetails/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+placeholder_text = "Empty Label"
+
+[node name="idLabel" type="Label" parent="cellDetails/VBoxContainer"]
+layout_mode = 2
+text = "Cell ID"
+
+[node name="CellID" type="TextEdit" parent="cellDetails/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+placeholder_text = "Cell ID (cannot compile without)"
+
+[connection signal="pressed" from="CheckButton" to="." method="_on_check_button_pressed"]

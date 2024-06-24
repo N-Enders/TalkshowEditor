@@ -141,9 +141,92 @@ func update_branch_states():
 				movableChildren[a].setMoveState("middle")
 
 
+func set_ass(varname):
+	$cellDetails/VBoxContainer/assBox.text = varname
+
+func get_ass():
+	return $cellDetails/VBoxContainer/assBox.text
+
+func set_fib(varname):
+	$cellDetails/VBoxContainer/fibBox.text = varname
+
+func get_fib():
+	return $cellDetails/VBoxContainer/fibBox.text
+
+
 func _move_branch(branch,direction):
 	var currentChildLocation = get_children().find(branch,0)
 	var newChildLocation = currentChildLocation + direction
 	move_child(branch,newChildLocation)
 	moved_branch.emit(self,currentChildLocation,newChildLocation)
 	update_branch_states()
+
+
+func setLabel(label):
+	$cellDetails/VBoxContainer/labelBox.text = label
+
+func getLabel():
+	return $cellDetails/VBoxContainer/labelBox.text
+
+
+func getDictLocation(dict,value):
+	if value in dict:
+		return {"dict":dict,"location":dict.find(value)}
+	dict.append(value)
+	return {"dict":dict,"location":dict.find(value)}
+
+func toCellData(cellConnections):
+	var datas = []
+	var dict = []
+	var dictLoc = getDictLocation(dict,getLabel())
+	dict = dictLoc["dict"]
+	datas.append(str(getID()))
+	datas.append("[[DictValue#"+dictLoc["location"]+"]]")
+	datas.append("I")
+	var childId = 0
+	if 0 in cellConnections:
+		childId = cellConnections[0]["cellID"]
+	datas.append(cellConnections[0]["cellID"])
+	return {"data":"|".join(datas),"dict":dict}
+
+func fromCellData(cellData, dict):
+	var connections = [] # [{"from_port":0,"to_cell":datas.pop_front()}]
+	var childIds = []
+	var timeout = {"exists":false}
+	var nomatch = {"exists":false}
+	var datas = Array(cellData.split("|"))
+	setID(datas.pop_front())
+	setLabel(dict[int(datas.pop_front())])
+	datas.pop_front()
+	set_ass(dict[int(datas.pop_front())])
+	set_fib(dict[int(datas.pop_front())])
+	for a in datas.pop_front().split("~"):
+		var branchData = Array(a.split("!"))
+		match branchData[2]:
+			"M","F":
+				var input
+				if len(branchData) > 3:
+					input = dict[int(branchData[3])]
+				create_mc_fib_branch({"type":"mcfib","id":int(branchData[0]),"FibMCType":branchData[2],"input":input})
+				childIds.append(branchData[1])
+			"T":
+				var input
+				if len(branchData) > 3:
+					input = dict[int(branchData[3])].split("!") 
+				create_timeout_branch({"type":"timeout","id":int(branchData[0]),"TimeoutData":{"type":input[0],"time":float(input[0])}})
+				timeout.exists = true
+				timeout.childId = branchData[1]
+			_:
+				nomatch.exists = true
+				nomatch.childId = branchData[1]
+	var port = -1
+	for a in childIds:
+		port += 1
+		connections.append({"from_port":port,"to_cell":a})
+	if timeout.exists:
+		port += 1
+		connections.append({"from_port":port,"to_cell":timeout.childId})
+	if nomatch.exists:
+		port += 1
+		connections.append({"from_port":port,"to_cell":nomatch.childId})
+	return {"connections":connections}

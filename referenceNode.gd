@@ -105,6 +105,16 @@ func _on_add_code_branch_pressed():
 func _on_add_hit_list_branch_pressed():
 	createHitlistBranch({"id":getNextBranchID(),"list":[]})
 
+func setLabel(label):
+	$cellDetails/VBoxContainer/labelBox.text = label
+	return label
+
+func getLabel():
+	var regex = RegEx.new()
+	regex.compile("/[\"^\"]/g")
+	var idVal = regex.sub($cellDetails/VBoxContainer/CellID.text,"")
+	return setLabel(int(idVal))
+
 func setID(id):
 	$cellDetails/VBoxContainer/CellID.text = str(id)
 	return id
@@ -142,3 +152,34 @@ func _input(event):
 
 func _on_delete_request():
 	print("delete")
+
+
+func fromCellData(cellData, dict):
+	var connections = [] # [{"from_port":0,"to_cell":datas.pop_front()}]
+	var childIds = []
+	var nomatch = {"exists":false}
+	var datas = Array(cellData.split("|"))
+	setID(datas.pop_front())
+	setLabel(dict[int(datas.pop_front())])
+	datas.pop_front()
+	setVar(dict[int(datas.pop_front())])
+	for a in datas.pop_front().split("~"):
+		var branchData = a.split("!")
+		match branchData[2]:
+			"C":
+				createCodeBranch({"id":branchData[0]})
+				childIds.append(branchData[1])
+			"N":
+				nomatch.exists = true
+				nomatch.childId = branchData[1]
+			_:
+				createHitlistBranch({"id":branchData[0],"list":dict[int(branchData[3])].split("^")})
+				childIds.append(branchData[1])
+	var port = -1
+	for a in childIds:
+		port += 1
+		connections.append({"from_port":port,"to_cell":a})
+	if nomatch.exists:
+		port += 1
+		connections.append({"from_port":port,"to_cell":nomatch.childId})
+	return {"connections":connections}

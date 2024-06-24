@@ -5,6 +5,8 @@ extends Control
 @export var input: PackedScene
 @export var reference: PackedScene
 
+@export var unknown: PackedScene
+
 
 
 var initialPos = Vector2(40,40)
@@ -17,6 +19,7 @@ var start_data
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	$GraphEdit.add_valid_left_disconnect_type(0)
+	$TextEdit.visible = false
 
 
 func add_data(data):
@@ -26,7 +29,6 @@ func add_data(data):
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass
-
 
 
 func _on_button_pressed():
@@ -43,6 +45,7 @@ func _on_button_pressed():
 			node.loadData({"id":id,"position":Vector2(0,0),"data":{}})
 			node.remove_branch.connect(_remove_branch)
 			node.add_branch.connect(_add_branch)
+			node.moved_branch.connect(_branch_moved)
 		2:
 			node = reference.instantiate()
 			node.loadData({"id":id,"var":"","data":[],"location":Vector2(0,0)})
@@ -57,7 +60,6 @@ func _on_button_pressed():
 	node_index += 1
 
 
-
 func _on_graph_edit_connection_request(from_node, from_port, to_node, to_port):
 	print($GraphEdit.get_connection_list())
 	for a in $GraphEdit.get_connection_list():
@@ -66,15 +68,12 @@ func _on_graph_edit_connection_request(from_node, from_port, to_node, to_port):
 	$GraphEdit.connect_node(from_node,from_port,to_node,to_port)
 
 
-
 func _on_graph_edit_disconnection_request(from_node, from_port, to_node, to_port):
 	$GraphEdit.disconnect_node(from_node,from_port,to_node,to_port)
 
 
-
 func _on_select_all_in_line_pressed():
 	select_all_nodes = true
-
 
 
 func select_all():
@@ -82,16 +81,13 @@ func select_all():
 		child.selected = true
 
 
-
 func unselect_all():
 	for child in $GraphEdit.get_children():
 		child.selected = false
 
 
-
 func sort(a, b):
 	return a["from_port"] < b["from_port"]
-
 
 
 func sort_all():
@@ -124,15 +120,11 @@ func sort_all():
 				continue
 			connectionsChecked.append(curName)
 			var preConnections = []
-			print("Checking " + curName)
 			for a in oldConnectionList:
-				print(a)
-				print(a["from_node"] + " = " + curName)
 				if a["from_node"] == curName:
 					preConnections.append(a)
 					connectionsToCheck.append(a["to_node"])
 			preConnections.sort_custom(sort)
-			print("Yknow what happens " + str(preConnections))
 			newConnectionList.append_array(preConnections)
 	print(newConnectionList)
 	select_all()
@@ -145,27 +137,35 @@ func sort_all():
 				node = b
 		print(a)
 		y = moveNode(node,Vector2(0,y),newConnectionList)
+	#add reshifter
 	unselect_all()
+
 
 func moveNode(node,vec,connections):
 	if not node.selected:
 		return 0
 	node.position_offset = vec
 	node.selected = false
-	var posX = vec.x 
+	var posX = vec.x
 	var posY = vec.y
 	var connect = getNodeConnection(node,connections)
-	var nodeSize = node.size.y + 100
-	var newestSize = 0
+	var nodeSize = node.size.y + 100 + posY
+	var newestSize = posY
+	var iterations = 0
 	for a in connect:
+		iterations += 1
 		for b in $GraphEdit.get_children():
 			if (b.name == a.to_node and b.selected):
-				var newSize = moveNode(b,Vector2(posX + node.size.x + 100,posY + newestSize),connections)
-				if newSize >= newestSize:
+				var newSize = moveNode(b,Vector2(posX + node.size.x + 100,newestSize),connections)
+				if newSize > newestSize:
 					newestSize = newSize
+					print("new")
+					print(newestSize)
+				break
 	if nodeSize < newestSize:
 		nodeSize = newestSize
-	return nodeSize + posY
+	print(nodeSize)
+	return nodeSize
 
 func getNodeConnection(node,connections):
 	var connection = []
@@ -206,7 +206,7 @@ func _add_branch(node,no_match):
 
 
 func _on_import_flow_pressed():
-	pass # Replace with function body.
+	$TextEdit.visible = true
 
 
 func getNextID():
@@ -265,3 +265,87 @@ func _branch_moved(node,oldPort,newPort):
 		$GraphEdit.connect_node(node.name, newPort, oldPortConnection.to_node, oldPortConnection.to_port) #old to new
 	if(newPortConnection):
 		$GraphEdit.connect_node(node.name, oldPort, newPortConnection.to_node, newPortConnection.to_port) #new to old
+
+func getDataType(data,type):
+	match type:
+		"int":
+			return int(data)
+		"String":
+			return data.left(-1).right(-1)
+		"Array":
+			return JSON.parse_string(data)
+		_:
+			print("whoopsie")
+
+func _on_text_edit_text_changed():
+	$TextEdit.visible = false
+	if("      public function FlowchartMain()" in str($TextEdit.text)):
+		var cells = []
+		var media = []
+		var params = []
+		var dict = []
+		var fname = ""
+		var pname = ""
+		var c = 0
+		var lines = str($TextEdit.text).split("\n")
+		var startData = {}
+		var preData = {}
+		for a in lines:
+			if "=" in a:
+				var pos = a.find("=")
+				var line = [a.substr(0,pos),a.substr(pos+1)]
+				var type = line[0].strip_edges().split(' ')[2].split(":")
+				var dataType = type[1]
+				type = type[0]
+				line.remove_at(0)
+				var data = "=".join(line).strip_edges().split(';')[0]
+				preData[type] = getDataType(data,dataType)
+		
+		dict = preData["dict"].split("^")
+		
+		var connectionsToMake = []
+		var cellIdsToName = {}
+		
+		for a in preData["cells"].split("^"):
+			var cell = ""
+			match a.split("|")[2]:
+				"I":
+					cell = input.instantiate()
+					cell.remove_branch.connect(_remove_branch)
+					cell.add_branch.connect(_add_branch)
+					cell.moved_branch.connect(_branch_moved)
+				"R":
+					cell = reference.instantiate()
+					cell.remove_branch.connect(_remove_branch)
+					cell.add_branch.connect(_add_branch)
+					cell.moved_branch.connect(_branch_moved)
+				"L":
+					cell = label.instantiate()
+				"G":
+					cell = goto.instantiate()
+				_:
+					cell = unknown.instantiate()
+			cell.node_selected.connect(_on_node_selected.bind(cell))
+			cell.node_deselected.connect(_on_node_deselected.bind(cell))
+			var returnValues = cell.fromCellData(a, dict)
+			
+			$GraphEdit.add_child(cell)
+			cellIdsToName[str(a.split("|")[0])] = cell.name
+			
+			for b in returnValues["connections"]:
+				connectionsToMake.append({"from_node": cell.name, "from_port": b["from_port"], "to_node": b["to_cell"]})
+		
+		print(cellIdsToName)
+		print(connectionsToMake)
+		
+		for a in connectionsToMake:
+			if(a["to_node"] in cellIdsToName.keys()):
+				$GraphEdit.connect_node(a["from_node"], a["from_port"], cellIdsToName[a["to_node"]], 0)
+		sort_all()
+
+
+
+func _on_graph_node_find(node,cellToFind):
+	for a in $GraphEdit.get_children():
+		if cellToFind == str(a.getID()):
+			$GraphEdit.connect_node(node.name, 0, a.name, 0)
