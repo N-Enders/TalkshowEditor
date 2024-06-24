@@ -61,7 +61,6 @@ func _on_button_pressed():
 
 
 func _on_graph_edit_connection_request(from_node, from_port, to_node, to_port):
-	print($GraphEdit.get_connection_list())
 	for a in $GraphEdit.get_connection_list():
 		if (a["from_node"] == from_node) and (a["from_port"] == from_port):
 			$GraphEdit.disconnect_node(a["from_node"],a["from_port"],a["to_node"],a["to_port"])
@@ -90,6 +89,8 @@ func sort(a, b):
 	return a["from_port"] < b["from_port"]
 
 
+var nodeLengths = {}
+
 func sort_all():
 	if(len($GraphEdit.get_children()) == 0):
 		return
@@ -110,7 +111,6 @@ func sort_all():
 			minimalConnections.append(a)
 	var oldConnectionList = $GraphEdit.get_connection_list()
 	var newConnectionList = []
-	print(oldConnectionList)
 	for b in minimalConnections:
 		var connectionsToCheck = [b]
 		var connectionsChecked = []
@@ -126,24 +126,39 @@ func sort_all():
 					connectionsToCheck.append(a["to_node"])
 			preConnections.sort_custom(sort)
 			newConnectionList.append_array(preConnections)
-	print(newConnectionList)
 	select_all()
-	var y = 0
-	print(minimalConnections)
 	for a in minimalConnections:
 		var node
 		for b in $GraphEdit.get_children():
 			if b.name == a:
 				node = b
-		print(a)
-		y = moveNode(node,Vector2(0,y),newConnectionList)
+		getNodeLength(node,newConnectionList)
+	select_all()
+	var y = 0
+	for a in minimalConnections:
+		var node
+		for b in $GraphEdit.get_children():
+			if b.name == a:
+				node = b
+		y = moveNode(node,Vector2(0,y),newConnectionList).max()
 	#add reshifter
 	unselect_all()
+	nodeLengths = {}
 
+func combineListsForMax(list1,list2):
+	print("list1 " + str(list1))
+	print("list2 " + str(list2))
+	var newList = list1
+	if list2.size() > list1.size():
+		newList = list2
+	for a in min(list1.size(),list2.size()):
+		newList[a] = max(list1[a],list2[a])
+	print("listN " + str(newList))
+	return newList
 
 func moveNode(node,vec,connections):
 	if not node.selected:
-		return 0
+		return [0]
 	node.position_offset = vec
 	node.selected = false
 	var posX = vec.x
@@ -152,29 +167,54 @@ func moveNode(node,vec,connections):
 	var nodeSize = node.size.y + 100 + posY
 	var newestSize = posY
 	var iterations = 0
+	var nodeSizes = [posY]
+	var newSizes = [posY]
 	for a in connect:
 		iterations += 1
 		for b in $GraphEdit.get_children():
 			if (b.name == a.to_node and b.selected):
-				var newSize = moveNode(b,Vector2(posX + node.size.x + 100,newestSize),connections)
-				if newSize > newestSize:
-					newestSize = newSize
-					print("new")
-					print(newestSize)
+				if iterations > 1:
+					print(b.name)
+					print(nodeLengths[b.name])
+					for c in nodeLengths[b.name]:
+						if c >= nodeSizes.size():
+							break
+						if nodeSizes[c] > newestSize:
+							newestSize = nodeSizes[c]
+				var newNodePos = Vector2(posX + node.size.x + 100,newestSize)
+				newSizes = moveNode(b,newNodePos,connections)
+				nodeSizes = combineListsForMax(nodeSizes,newSizes)
 				break
-	if nodeSize < newestSize:
-		nodeSize = newestSize
-	print(nodeSize)
-	return nodeSize
+	var newNewNewNodeSizes = [nodeSize]
+	for a in nodeSizes:
+		newNewNewNodeSizes.append(a)
+	if(iterations > 1):
+		print("super size " + str(len(nodeSizes)))
+	return newNewNewNodeSizes
+
+func getNodeLength(node,connections):
+	if not node.selected:
+		return 0
+	node.selected = false
+	var connect = getNodeConnection(node,connections)
+	var iterations = 0
+	var length = 0
+	for a in connect:
+		iterations += 1
+		for b in $GraphEdit.get_children():
+			if (b.name == a.to_node and b.selected):
+				var newLength = getNodeLength(b,connections)
+				if newLength > length:
+					length = newLength
+				break
+	nodeLengths[node.name] = length + 1
+	return length + 1
 
 func getNodeConnection(node,connections):
 	var connection = []
-	print("checcking connections for " + node.name)
 	for a in connections:
-		print(a)
 		if a["from_node"] == node.name:
 			connection.append(a)
-	print("returning " + str(connection))
 	return connection
 
 
@@ -187,7 +227,6 @@ func _on_get_data_pressed():
 
 
 func _remove_branch(node,index_deleted):
-	print(node.name + " just deleted option #"+str(index_deleted))
 	var connections = getNodeConnection(node,$GraphEdit.get_connection_list())
 	for a in connections:
 		if (a["from_port"] >= (index_deleted - 1)):
@@ -196,9 +235,7 @@ func _remove_branch(node,index_deleted):
 			$GraphEdit.connect_node(a["from_node"],a["from_port"] - 1,a["to_node"],a["to_port"])
 
 func _add_branch(node,no_match):
-	print(node.name + " just added an option")
 	var connections = getNodeConnection(node,$GraphEdit.get_connection_list())
-	print(no_match)
 	for a in connections:
 		if(a["from_port"] >= (no_match-1)):
 			$GraphEdit.disconnect_node(a["from_node"],a["from_port"],a["to_node"],a["to_port"])
@@ -250,10 +287,6 @@ func _branch_moved(node,oldPort,newPort):
 	newPort -= 1
 	for con in $GraphEdit.get_connection_list():
 		if con.from_node == node.name:
-			print(con.from_port)
-			print(con.from_node)
-			print(str(oldPort)+" old port")
-			print(str(newPort)+" new port")
 			match con.from_port:
 				oldPort:
 					oldPortConnection = con
@@ -335,8 +368,6 @@ func _on_text_edit_text_changed():
 			for b in returnValues["connections"]:
 				connectionsToMake.append({"from_node": cell.name, "from_port": b["from_port"], "to_node": b["to_cell"]})
 		
-		print(cellIdsToName)
-		print(connectionsToMake)
 		
 		for a in connectionsToMake:
 			if(a["to_node"] in cellIdsToName.keys()):
