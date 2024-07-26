@@ -4,6 +4,7 @@ extends Control
 @export var goto: PackedScene
 @export var input: PackedScene
 @export var reference: PackedScene
+@export var returnc: PackedScene
 
 @export var unknown: PackedScene
 
@@ -356,6 +357,8 @@ func _on_text_edit_text_changed():
 					cell = label.instantiate()
 				"G":
 					cell = goto.instantiate()
+				"N":
+					cell = returnc.instantiate()
 				_:
 					cell = unknown.instantiate()
 			cell.node_selected.connect(_on_node_selected.bind(cell))
@@ -374,6 +377,27 @@ func _on_text_edit_text_changed():
 				$GraphEdit.connect_node(a["from_node"], a["from_port"], cellIdsToName[a["to_node"]], 0)
 		sort_all()
 
+
+func _send_action_data_to_node(node,actionID):
+	var raw_action = start_data["actions"][actionID]
+	var dict = start_data["dict"]
+	var action = {"id":raw_action.id,"name":dict[raw_action.name],"params":[]}
+	for a in raw_action.params:
+		action["params"].append({"name":dict[a.name],"type":a.type})
+	node.set_action(action)
+
+
+func _send_list_of_actions_to_node(node):
+	node.set_action_names(_get_action_names())
+
+
+func _get_action_names():
+	var actions = start_data["actions"]
+	var dict = start_data["dict"]
+	var actionNames = {}
+	for a in actions:
+		actionNames[dict[actions[a]["name"]]] = a
+	return actionNames
 
 
 func _on_graph_node_find(node,cellToFind):

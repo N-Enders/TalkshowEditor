@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://de4wbolycij03"]
+[gd_scene load_steps=9 format=3 uid="uid://de4wbolycij03"]
 
 [ext_resource type="Script" path="res://flow.gd" id="1_wmdaj"]
 [ext_resource type="PackedScene" uid="uid://dvuhmjygma4ab" path="res://labelNode.tscn" id="2_ad2jk"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://dcn1prov3crg6" path="res://referenceNode.tscn" id="4_y34kv"]
 [ext_resource type="PackedScene" uid="uid://cwhur2udbumum" path="res://unknownNode.tscn" id="5_qus1i"]
 [ext_resource type="Script" path="res://findNode.gd" id="6_c0mfa"]
+[ext_resource type="PackedScene" uid="uid://dfh64ywusg2xq" path="res://return_cell.tscn" id="6_grnml"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -21,6 +22,7 @@ label = ExtResource("2_ad2jk")
 goto = ExtResource("3_x15c6")
 input = ExtResource("3_m671y")
 reference = ExtResource("4_y34kv")
+returnc = ExtResource("6_grnml")
 unknown = ExtResource("5_qus1i")
 
 [node name="AspectRatioContainer" type="AspectRatioContainer" parent="."]

@@ -5,6 +5,7 @@
 [node name="TimeoutBranch" type="GraphNode"]
 offset_right = 40.0
 offset_bottom = 40.0
+title = "Timeout Branch"
 slot/0/left_enabled = false
 slot/0/left_type = 0
 slot/0/left_color = Color(1, 1, 1, 1)
@@ -72,7 +73,7 @@ text = "Delete"
 
 [node name="StartTimer" type="CheckButton" parent="."]
 layout_mode = 2
-text = "Start Timer"
+text = "From Start"
 
 [node name="TimerLabel" type="Label" parent="."]
 layout_mode = 2

@@ -46,7 +46,7 @@ func _on_new_pressed():
 
 
 func _on_newmenucode_text_changed():
-	pass
+	return
 	var text = $newmenucode.text
 	if "ExportMain" in text:
 		var list = text.split('\n')
