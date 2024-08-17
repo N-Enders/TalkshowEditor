@@ -2,19 +2,12 @@ extends GraphNode
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	checkForSlotUpdate()
+	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass
 
-func checkForSlotUpdate():
-	set_slot_enabled_right(1,$CheckButton.button_pressed)
-	$ConnectingData.visible = !$CheckButton.button_pressed
-	size.y = 0
-
-func _on_check_button_pressed():
-	checkForSlotUpdate()
 
 func setID(id):
 	$cellDetails/VBoxContainer/CellID.text = str(id)
@@ -73,8 +66,4 @@ func fromCellData(cellData, dict):
 	var childCell = datas.pop_front()
 	setFlowchartID(flowchartId)
 	setChildCellID(childCell)
-	$CheckButton.button_pressed = true
-	if (len(flowchartId) > 0):
-		$CheckButton.button_pressed = false
-		return {"connections":[]}
-	return {"connections":[{"from_port":0,"to_cell":childCell}]}
+	return {"connections":[]}
