@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://de4wbolycij03"]
+[gd_scene load_steps=11 format=3 uid="uid://de4wbolycij03"]
 
 [ext_resource type="Script" path="res://flow.gd" id="1_wmdaj"]
 [ext_resource type="PackedScene" uid="uid://dvuhmjygma4ab" path="res://labelNode.tscn" id="2_ad2jk"]
@@ -8,13 +8,14 @@
 [ext_resource type="PackedScene" uid="uid://cwhur2udbumum" path="res://unknownNode.tscn" id="5_qus1i"]
 [ext_resource type="Script" path="res://findNode.gd" id="6_c0mfa"]
 [ext_resource type="PackedScene" uid="uid://dfh64ywusg2xq" path="res://return_cell.tscn" id="6_grnml"]
+[ext_resource type="Script" path="res://ConfirmationDialog.gd" id="9_eddrg"]
+[ext_resource type="Script" path="res://FlowActions.gd" id="10_p085w"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 33.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_wmdaj")
@@ -25,17 +26,11 @@ reference = ExtResource("4_y34kv")
 returnc = ExtResource("6_grnml")
 unknown = ExtResource("5_qus1i")
 
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
 [node name="GraphEdit" type="GraphEdit" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 3.0
 grow_horizontal = 2
 grow_vertical = 2
 zoom_max = 3.0
@@ -52,7 +47,7 @@ slot/0/left_enabled = false
 slot/0/left_type = 0
 slot/0/left_color = Color(1, 1, 1, 1)
 slot/0/left_icon = null
-slot/0/right_enabled = true
+slot/0/right_enabled = false
 slot/0/right_type = 0
 slot/0/right_color = Color(0.427451, 0.682353, 0.603922, 1)
 slot/0/right_icon = null
@@ -88,72 +83,27 @@ layout_mode = 2
 layout_mode = 2
 text = "Find"
 
-[node name="Button" type="Button" parent="."]
-layout_mode = 0
-offset_left = 181.0
-offset_top = -33.0
-offset_right = 400.0
-offset_bottom = 3.0
-text = "Add Node"
-
-[node name="sortAll" type="Button" parent="."]
-layout_mode = 0
-offset_left = 932.0
-offset_top = -33.0
-offset_right = 1152.0
-offset_bottom = 3.0
-text = "Sort All"
-
-[node name="getData" type="Button" parent="."]
-layout_mode = 0
-offset_left = 713.0
-offset_top = -33.0
-offset_right = 932.0
-offset_bottom = 3.0
-text = "Get Data"
-
-[node name="importFlow" type="Button" parent="."]
-layout_mode = 0
-offset_left = 440.0
-offset_top = -33.0
-offset_right = 640.0
-offset_bottom = 3.0
-text = "Import Flowchart"
-
-[node name="OptionButton" type="OptionButton" parent="."]
-layout_mode = 0
-offset_top = -33.0
-offset_right = 181.0
-offset_bottom = 3.0
-item_count = 3
-selected = 0
-popup/item_0/text = "Label"
-popup/item_0/id = 0
-popup/item_1/text = "Input"
-popup/item_1/id = 1
-popup/item_2/text = "Reference"
-popup/item_2/id = 2
-
 [node name="ConfirmationDialog" type="ConfirmationDialog" parent="."]
 dialog_text = "Are you sure you want to delete all selected nodes?"
+script = ExtResource("9_eddrg")
 
-[node name="TextEdit" type="TextEdit" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-placeholder_text = "Paste Flowchart Code Here"
+[node name="PopupMenu" type="PopupMenu" parent="."]
+title = "Flowchart Actions"
+item_count = 3
+item_0/text = "Find"
+item_0/id = 0
+item_1/text = "Sort"
+item_1/id = 1
+item_2/text = ""
+item_2/id = 2
+script = ExtResource("10_p085w")
 
 [connection signal="connection_request" from="GraphEdit" to="." method="_on_graph_edit_connection_request"]
 [connection signal="delete_nodes_request" from="GraphEdit" to="." method="_on_graph_edit_delete_nodes_request"]
 [connection signal="disconnection_request" from="GraphEdit" to="." method="_on_graph_edit_disconnection_request"]
+[connection signal="popup_request" from="GraphEdit" to="." method="_on_graph_edit_popup_request"]
 [connection signal="find" from="GraphEdit/GraphNode" to="." method="_on_graph_node_find"]
 [connection signal="pressed" from="GraphEdit/GraphNode/Button" to="GraphEdit/GraphNode" method="_on_button_pressed"]
-[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
-[connection signal="pressed" from="sortAll" to="." method="_on_sort_all_pressed"]
-[connection signal="pressed" from="getData" to="." method="_on_get_data_pressed"]
-[connection signal="pressed" from="importFlow" to="." method="_on_import_flow_pressed"]
 [connection signal="confirmed" from="ConfirmationDialog" to="." method="_on_confirmation_dialog_confirmed"]
-[connection signal="text_changed" from="TextEdit" to="." method="_on_text_edit_text_changed"]
+[connection signal="id_pressed" from="PopupMenu" to="PopupMenu" method="_on_id_pressed"]
+[connection signal="sortPressed" from="PopupMenu" to="." method="_on_popup_menu_sort_pressed"]

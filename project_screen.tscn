@@ -1,0 +1,96 @@
+[gd_scene load_steps=3 format=3 uid="uid://bo0rqdo7shdg5"]
+
+[ext_resource type="Script" path="res://project_screen.gd" id="1_g1q2c"]
+[ext_resource type="PackedScene" uid="uid://de4wbolycij03" path="res://flow.tscn" id="2_v7728"]
+
+[node name="ProjectScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_g1q2c")
+flow = ExtResource("2_v7728")
+
+[node name="HSplitContainer" type="HSplitContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+split_offset = 100
+
+[node name="InfoContainer" type="TabContainer" parent="HSplitContainer"]
+layout_mode = 2
+drag_to_rearrange_enabled = true
+
+[node name="Media" type="ScrollContainer" parent="HSplitContainer/InfoContainer"]
+layout_mode = 2
+
+[node name="Media" type="VBoxContainer" parent="HSplitContainer/InfoContainer/Media"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="HSplitContainer/InfoContainer/Media/Media"]
+layout_mode = 2
+text = "womp womp"
+
+[node name="Button2" type="Button" parent="HSplitContainer/InfoContainer/Media/Media"]
+layout_mode = 2
+text = "womp womp"
+
+[node name="Actions" type="VBoxContainer" parent="HSplitContainer/InfoContainer"]
+visible = false
+layout_mode = 2
+
+[node name="Button" type="Button" parent="HSplitContainer/InfoContainer/Actions"]
+layout_mode = 2
+text = "womp womp"
+
+[node name="Button2" type="Button" parent="HSplitContainer/InfoContainer/Actions"]
+layout_mode = 2
+text = "womp womp"
+
+[node name="FlowContainers" type="TabContainer" parent="HSplitContainer"]
+layout_mode = 2
+drag_to_rearrange_enabled = true
+
+[node name="Create New Flowchart" type="HBoxContainer" parent="HSplitContainer/FlowContainers"]
+layout_mode = 2
+
+[node name="main" type="VBoxContainer" parent="HSplitContainer/FlowContainers/Create New Flowchart"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="HSplitContainer/FlowContainers/Create New Flowchart/main"]
+layout_mode = 2
+text = "Paste from FlowchartMain"
+horizontal_alignment = 1
+
+[node name="CodeEdit" type="CodeEdit" parent="HSplitContainer/FlowContainers/Create New Flowchart/main"]
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "Paste Valid FlowchartMain
+
+(will erase if invalid)"
+
+[node name="code" type="VBoxContainer" parent="HSplitContainer/FlowContainers/Create New Flowchart"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="HSplitContainer/FlowContainers/Create New Flowchart/code"]
+layout_mode = 2
+text = "Paste from FlowchartCode"
+horizontal_alignment = 1
+
+[node name="CodeEdit" type="CodeEdit" parent="HSplitContainer/FlowContainers/Create New Flowchart/code"]
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "Paste Valid FlowchartCode
+
+(will erase if invalid)"
+
+[connection signal="dragged" from="HSplitContainer" to="." method="_on_h_split_container_dragged"]
+[connection signal="text_changed" from="HSplitContainer/FlowContainers/Create New Flowchart/main/CodeEdit" to="." method="_on_code_edit_text_changed"]
+[connection signal="text_changed" from="HSplitContainer/FlowContainers/Create New Flowchart/code/CodeEdit" to="." method="_on_code_edit_text_changed"]
