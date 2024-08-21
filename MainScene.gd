@@ -18,9 +18,9 @@ func create_menu():
 func create_flowchart(data):
 	remove_all_children()
 	var flowchart = flow.instantiate()
-	flowchart.add_data(data)
 	add_child(flowchart)
-
+	flowchart.loadInfo(data)
+	
 
 func remove_all_children():
 	for a in get_children():

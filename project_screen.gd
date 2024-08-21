@@ -1,6 +1,11 @@
 extends Control
 
 @export var flow: PackedScene
+@export var actionEdit: PackedScene
+
+
+var projectContent = {}
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -15,17 +20,30 @@ func _process(delta):
 func _on_h_split_container_dragged(offset):
 	if offset <= 100:
 		$HSplitContainer.split_offset = 100
-	if offset >= size.x - 100:
-		$HSplitContainer.split_offset = size.x - 100
+	if offset >= 500:
+		$HSplitContainer.split_offset = 500
 	print(offset)
 
+
+#{"id":packId,"name":packName,"type":packType,"projectParent":projectParent}
 func loadInfo(data):
-	pass
+	projectContent = data.startData
+	print(projectContent.keys())
+	
+	var packages = []
+	for a in projectContent.packages:
+		packages.append({"id":projectContent.packages[a].id,"name":projectContent.packages[a].name})
+	
+	
+	for a in projectContent.actions:
+		var newAction = actionEdit.instantiate()
+		$HSplitContainer/VBoxContainer/InfoContainer/Actions/Actions.add_child(newAction)
+		print("Adding action " + str(projectContent.actions[a].name))
+		newAction.loadFromData(projectContent.actions[a],packages,projectContent.dict)
+
+
 
 func loadFlowchart(data):
-	pass
-
-func decompFlowchart(main,code):
 	pass
 
 
@@ -67,8 +85,13 @@ func dataDecomp():
 		var newFlow = flow.instantiate()
 		newFlow.name = preData["fname"]
 		$HSplitContainer/FlowContainers.add_child(newFlow)
+		
+		newFlow.request_data.connect(_data_request)
+		
+		
 		await newFlow.createFlowchartFromData(preData)
 		
+		$HSplitContainer/FlowContainers.current_tab = $HSplitContainer/FlowContainers.get_child_count()-1
 
 
 func _on_code_edit_text_changed():
@@ -88,3 +111,43 @@ func check_imports():
 		await dataDecomp()
 		$"HSplitContainer/FlowContainers/Create New Flowchart/main/CodeEdit".text = ""
 		$"HSplitContainer/FlowContainers/Create New Flowchart/code/CodeEdit".text = ""
+
+
+
+func _switch_flow(toFlowData):
+	var children = $HSplitContainer/FlowContainers.get_children()
+	var curIndex = 0
+	for a in children:
+		if a.name == toFlowData["name"]:
+			$HSplitContainer/FlowContainers.current_tab = curIndex
+		curIndex += 1
+	
+	$HSplitContainer/FlowContainers.current_tab = 0
+
+
+
+func _data_request(requestType,item,type,value):
+	match requestType:
+		"flow":
+			getFlowData(item,type,value)
+
+
+func getFlowData(item,type,value):
+	#{0: {"id": 0, "name": testName, "type": Subroutine/Flowchart, "projectParent":("projects" id)}}
+	var flows = projectContent["flowcharts"]
+	
+	match type:
+		"name":
+			for a in flows:
+				if flows[a]["name"] == value:
+					item.returnData(flows[a],"flow")
+		"id":
+			for a in flows:
+				if a == str(value):
+					item.returnData(flows[a],"flow")
+	
+	
+
+
+func _on_filter_text_changed(new_text):
+	pass # Replace with function body.

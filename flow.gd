@@ -9,8 +9,6 @@ extends Control
 @export var unknown: PackedScene
 
 
-
-
 func createFlowchartFromData(preData):
 	var dict = preData["dict"].split("^")
 		
@@ -38,6 +36,16 @@ func createFlowchartFromData(preData):
 				cell = returnc.instantiate()
 			_:
 				cell = unknown.instantiate()
+		
+			#Cell controls flow attachments
+		if cell.has_signal(StringName("request_switch_flow")):
+			cell.request_switch_flow.connect(_cell_requests_flow_switch)
+	
+		#Cell requests data connects
+		if cell.has_signal(StringName("request_data")):
+			cell.request_data.connect(_request_data)
+		
+		
 		cell.node_selected.connect(_on_node_selected.bind(cell))
 		cell.node_deselected.connect(_on_node_deselected.bind(cell))
 		var returnValues = cell.fromCellData(a, dict)
@@ -96,6 +104,16 @@ func create_specific_cell(type):
 			node.remove_branch.connect(_remove_branch)
 			node.add_branch.connect(_add_branch)
 			node.moved_branch.connect(_branch_moved)
+	
+	
+	#Cell controls flow attachments
+	if node.has_signal(StringName("request_switch_flow")):
+		node.request_switch_flow.connect(_cell_requests_flow_switch)
+	
+	#Cell requests data connects
+	if node.has_signal(StringName("request_data")):
+		node.request_data.connect(_request_data)
+	
 	
 	var tempZoom = $GraphEdit.zoom
 	$GraphEdit.zoom = 1
@@ -373,5 +391,32 @@ func _on_graph_edit_popup_request(position):
 	$PopupMenu.activate(position)
 
 
+func _on_popup_menu_find_pressed(position):
+	$PopupPanel.activate(position)
+
+
 func _on_popup_menu_sort_pressed():
 	sort_all()
+
+
+signal request_data
+signal request_returned #used locally
+var returnedData = {}
+var dataAwaiting = ""
+
+func _request_data(requestType,cell,type,value):
+	dataAwaiting = requestType
+	request_data.emit(requestType,self,type,value)
+	await request_returned
+	cell.returnData(returnedData)
+
+func returnData(data,typeReturned):
+	if dataAwaiting == typeReturned:
+		returnedData = data
+		request_returned.emit()
+
+
+signal switch_flow
+
+func _cell_requests_flow_switch(newFlowData):
+	switch_flow.emit(newFlowData)

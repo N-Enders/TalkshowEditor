@@ -72,6 +72,11 @@ custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 placeholder_text = "(This Flowchart)"
 
+[node name="Button" type="Button" parent="ConnectingData/Flowchart"]
+layout_mode = 2
+disabled = true
+text = "Jump To Flowchart"
+
 [node name="Cell" type="VBoxContainer" parent="ConnectingData"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -83,7 +88,6 @@ text = "Cell ID"
 [node name="TextEdit" type="TextEdit" parent="ConnectingData/Cell"]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-text = "tes"
 
 [node name="cellDetails" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -111,3 +115,6 @@ text = "Cell ID"
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 placeholder_text = "Cell ID (cannot compile without)"
+
+[connection signal="text_changed" from="ConnectingData/Flowchart/TextEdit" to="." method="_on_text_edit_text_changed"]
+[connection signal="pressed" from="ConnectingData/Flowchart/Button" to="." method="_on_button_pressed"]

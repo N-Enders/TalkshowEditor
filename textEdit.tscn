@@ -5,7 +5,6 @@
 [node name="HBoxContainer" type="HBoxContainer"]
 offset_right = 40.0
 offset_bottom = 40.0
-size_flags_horizontal = 3
 script = ExtResource("1_iib2n")
 
 [node name="Button" type="Button" parent="."]
@@ -14,11 +13,7 @@ layout_mode = 2
 size_flags_horizontal = 0
 text = "X"
 
-[node name="TextEdit" type="TextEdit" parent="."]
-custom_minimum_size = Vector2(0, 40)
-layout_direction = 3
+[node name="TextEdit" type="LineEdit" parent="."]
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 0
 
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

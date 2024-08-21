@@ -46,7 +46,6 @@ func _on_new_pressed():
 
 
 func _on_newmenucode_text_changed():
-	return
 	var text = $newmenucode.text
 	if "ExportMain" in text:
 		var list = text.split('\n')
@@ -142,8 +141,8 @@ func decompStart(start):
 	for a in preData["packages"].split("^"):
 		await waitTime()
 		var splitData = Array(a.split("|"))
-		var packName = int(splitData[0])
-		var packId = splitData[1]
+		var packName = int(splitData[1])
+		var packId = splitData[0]
 		var packType
 		match splitData[2]:
 			"I":
@@ -156,6 +155,7 @@ func decompStart(start):
 		startData["packages"][packId] = {"id":packId,"name":packName,"type":packType,"projectParent":projectParent}
 	preData.erase("packages")
 	
+	#{0: {"id": 0, "name": testName, "type": Subroutine/Flowchart, "projectParent":("projects" id)}}
 	$LoadingLabel.setDetails(dict[startData["workspaceName"]] + " parsing flowcharts")
 	startData["flowcharts"] = {}
 	for a in preData["flowcharts"].split("^"):

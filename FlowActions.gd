@@ -2,7 +2,7 @@ extends PopupMenu
 
 
 signal sortPressed
-
+signal findPressed
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -20,7 +20,7 @@ func activate(param):
 
 func _on_id_pressed(id):
 	match id:
+		0:
+			findPressed.emit(position)
 		1:
-			pass
-		2:
 			sortPressed.emit()

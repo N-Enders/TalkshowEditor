@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://bo0rqdo7shdg5"]
+[gd_scene load_steps=5 format=3 uid="uid://bo0rqdo7shdg5"]
 
 [ext_resource type="Script" path="res://project_screen.gd" id="1_g1q2c"]
 [ext_resource type="PackedScene" uid="uid://de4wbolycij03" path="res://flow.tscn" id="2_v7728"]
+[ext_resource type="PackedScene" uid="uid://cu8xt2xvv87ue" path="res://action_edit.tscn" id="3_88v0h"]
+[ext_resource type="Script" path="res://Info.gd" id="4_jv6i4"]
 
 [node name="ProjectScreen" type="Control"]
 layout_mode = 3
@@ -12,6 +14,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_g1q2c")
 flow = ExtResource("2_v7728")
+actionEdit = ExtResource("3_88v0h")
 
 [node name="HSplitContainer" type="HSplitContainer" parent="."]
 layout_mode = 1
@@ -22,35 +25,24 @@ grow_horizontal = 2
 grow_vertical = 2
 split_offset = 100
 
-[node name="InfoContainer" type="TabContainer" parent="HSplitContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HSplitContainer"]
 layout_mode = 2
+script = ExtResource("4_jv6i4")
+
+[node name="InfoContainer" type="TabContainer" parent="HSplitContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
 drag_to_rearrange_enabled = true
 
-[node name="Media" type="ScrollContainer" parent="HSplitContainer/InfoContainer"]
+[node name="Actions" type="ScrollContainer" parent="HSplitContainer/VBoxContainer/InfoContainer"]
 layout_mode = 2
 
-[node name="Media" type="VBoxContainer" parent="HSplitContainer/InfoContainer/Media"]
+[node name="Actions" type="VBoxContainer" parent="HSplitContainer/VBoxContainer/InfoContainer/Actions"]
 layout_mode = 2
 
-[node name="Button" type="Button" parent="HSplitContainer/InfoContainer/Media/Media"]
+[node name="Filter" type="LineEdit" parent="HSplitContainer/VBoxContainer"]
 layout_mode = 2
-text = "womp womp"
-
-[node name="Button2" type="Button" parent="HSplitContainer/InfoContainer/Media/Media"]
-layout_mode = 2
-text = "womp womp"
-
-[node name="Actions" type="VBoxContainer" parent="HSplitContainer/InfoContainer"]
-visible = false
-layout_mode = 2
-
-[node name="Button" type="Button" parent="HSplitContainer/InfoContainer/Actions"]
-layout_mode = 2
-text = "womp womp"
-
-[node name="Button2" type="Button" parent="HSplitContainer/InfoContainer/Actions"]
-layout_mode = 2
-text = "womp womp"
+placeholder_text = "Filter"
 
 [node name="FlowContainers" type="TabContainer" parent="HSplitContainer"]
 layout_mode = 2
@@ -92,5 +84,6 @@ placeholder_text = "Paste Valid FlowchartCode
 (will erase if invalid)"
 
 [connection signal="dragged" from="HSplitContainer" to="." method="_on_h_split_container_dragged"]
+[connection signal="text_changed" from="HSplitContainer/VBoxContainer/Filter" to="HSplitContainer/VBoxContainer" method="_on_filter_text_changed"]
 [connection signal="text_changed" from="HSplitContainer/FlowContainers/Create New Flowchart/main/CodeEdit" to="." method="_on_code_edit_text_changed"]
 [connection signal="text_changed" from="HSplitContainer/FlowContainers/Create New Flowchart/code/CodeEdit" to="." method="_on_code_edit_text_changed"]
