@@ -1,12 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://cu8xt2xvv87ue"]
+[gd_scene load_steps=2 format=3 uid="uid://gxj4qnbydl1l"]
 
-[ext_resource type="Script" path="res://ActionEdit.gd" id="1_i2ji6"]
+[ext_resource type="Script" path="res://FlowchartEdit.gd" id="1_5haov"]
 
-[node name="ActionEdit" type="GraphNode"]
-custom_minimum_size = Vector2(500, 0)
+[node name="FlowchartEdit" type="GraphNode"]
 offset_right = 9.0
 offset_bottom = 55.0
-title = "Action"
 slot/0/left_enabled = false
 slot/0/left_type = 0
 slot/0/left_color = Color(1, 1, 1, 1)
@@ -79,40 +77,55 @@ slot/7/right_type = 0
 slot/7/right_color = Color(1, 1, 1, 1)
 slot/7/right_icon = null
 slot/7/draw_stylebox = true
-script = ExtResource("1_i2ji6")
+slot/8/left_enabled = false
+slot/8/left_type = 0
+slot/8/left_color = Color(1, 1, 1, 1)
+slot/8/left_icon = null
+slot/8/right_enabled = false
+slot/8/right_type = 0
+slot/8/right_color = Color(1, 1, 1, 1)
+slot/8/right_icon = null
+slot/8/draw_stylebox = true
+script = ExtResource("1_5haov")
 
-[node name="ActionIdLabel" type="Label" parent="."]
+[node name="NameLabel" type="Label" parent="."]
+layout_mode = 2
+text = "Name"
+
+[node name="NameEdit" type="LineEdit" parent="."]
+layout_mode = 2
+
+[node name="IdLabel" type="Label" parent="."]
 layout_mode = 2
 text = "Id"
 
-[node name="ActionIdEdit" type="LineEdit" parent="."]
+[node name="IdEdit" type="LineEdit" parent="."]
 layout_mode = 2
 
-[node name="ActionNameLabel" type="Label" parent="."]
+[node name="TypeLabel" type="Label" parent="."]
 layout_mode = 2
-text = "Action Name"
+text = "Type"
 
-[node name="ActionNameEdit" type="LineEdit" parent="."]
+[node name="TypeChoose" type="OptionButton" parent="."]
 layout_mode = 2
-placeholder_text = "Action Name"
+item_count = 2
+selected = 1
+popup/item_0/text = "Flowchart"
+popup/item_0/id = 0
+popup/item_1/text = "Subroutine"
+popup/item_1/id = 1
 
-[node name="PackageLabel" type="Label" parent="."]
+[node name="ProjectLabel" type="Label" parent="."]
 layout_mode = 2
-text = "Package Parent"
+text = "Project Parent"
 
-[node name="OptionButton" type="OptionButton" parent="."]
-layout_mode = 2
-
-[node name="ParamLabels" type="Label" parent="."]
-layout_mode = 2
-text = "Parameters"
-
-[node name="ParamsContainer" type="MarginContainer" parent="."]
-layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_right = 10
-
-[node name="ParamsContainer" type="VBoxContainer" parent="ParamsContainer"]
+[node name="ProjectChoose" type="OptionButton" parent="."]
+custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 
-[connection signal="item_selected" from="OptionButton" to="." method="_on_option_button_item_selected"]
+[node name="JumpButton" type="Button" parent="."]
+layout_mode = 2
+disabled = true
+text = "Jump To Flowchart"
+
+[connection signal="pressed" from="JumpButton" to="." method="_on_jump_button_pressed"]

@@ -8,6 +8,7 @@ extends Control
 
 @export var unknown: PackedScene
 
+var knownStartCell = 0
 
 func createFlowchartFromData(preData):
 	var dict = preData["dict"].split("^")

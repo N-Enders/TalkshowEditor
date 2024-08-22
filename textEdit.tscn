@@ -15,5 +15,6 @@ text = "X"
 
 [node name="TextEdit" type="LineEdit" parent="."]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

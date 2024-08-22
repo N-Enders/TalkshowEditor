@@ -2,6 +2,8 @@ extends Control
 
 @export var flow: PackedScene
 @export var actionEdit: PackedScene
+@export var flowEdit: PackedScene
+
 
 
 var projectContent = {}
@@ -34,17 +36,39 @@ func loadInfo(data):
 	for a in projectContent.packages:
 		packages.append({"id":projectContent.packages[a].id,"name":projectContent.packages[a].name})
 	
-	
+	#Actions Info
 	for a in projectContent.actions:
 		var newAction = actionEdit.instantiate()
 		$HSplitContainer/VBoxContainer/InfoContainer/Actions/Actions.add_child(newAction)
 		print("Adding action " + str(projectContent.actions[a].name))
 		newAction.loadFromData(projectContent.actions[a],packages,projectContent.dict)
-
-
-
-func loadFlowchart(data):
-	pass
+	
+	#Project Info/Flowchart Info
+	var index = 0
+	for a in projectContent.flowcharts:
+		$"HSplitContainer/VBoxContainer/InfoContainer/Project Info/Starting/VBoxContainer/OptionButton".add_item(projectContent.dict[projectContent.flowcharts[a].name])
+		
+		var newFlowEdit = flowEdit.instantiate()
+		$HSplitContainer/VBoxContainer/InfoContainer/Flowcharts/Flowcharts.add_child(newFlowEdit)
+		print("Adding action " + str(projectContent.flowcharts[a].name))
+		newFlowEdit.loadFromData(projectContent.flowcharts[a],projectContent.dict,projectContent.projects)
+		
+		
+		if int(projectContent.startingFlowchart) == int(projectContent.flowcharts[a].id):
+			$"HSplitContainer/VBoxContainer/InfoContainer/Project Info/Starting/VBoxContainer/OptionButton".selected = index
+		index += 1
+	
+	var importedFlows = []
+		
+	for a in $HSplitContainer/FlowContainers.get_children():
+		importedFlows.append(a.name)
+	
+	for a in $HSplitContainer/VBoxContainer/InfoContainer/Flowcharts/Flowcharts.get_children():
+		a.checkEnable(importedFlows)
+	
+	$"HSplitContainer/VBoxContainer/InfoContainer/Project Info/GameNameEdit".text = projectContent.dict[projectContent.workspaceName]
+	$"HSplitContainer/VBoxContainer/InfoContainer/Project Info/ProjectNameEdit".text = projectContent.dict[projectContent.projectName]
+	$"HSplitContainer/VBoxContainer/InfoContainer/Project Info/Starting/VBoxContainer2/LineEdit".text = str(projectContent.startingCell)
 
 
 func getDataType(data,type):
@@ -57,7 +81,6 @@ func getDataType(data,type):
 			return JSON.parse_string(data)
 		_:
 			print("whoopsie")
-
 
 
 func dataDecomp():
@@ -84,10 +107,10 @@ func dataDecomp():
 				preData[type] = getDataType(data,dataType)
 		var newFlow = flow.instantiate()
 		newFlow.name = preData["fname"]
+		
 		$HSplitContainer/FlowContainers.add_child(newFlow)
 		
 		newFlow.request_data.connect(_data_request)
-		
 		
 		await newFlow.createFlowchartFromData(preData)
 		
@@ -111,6 +134,16 @@ func check_imports():
 		await dataDecomp()
 		$"HSplitContainer/FlowContainers/Create New Flowchart/main/CodeEdit".text = ""
 		$"HSplitContainer/FlowContainers/Create New Flowchart/code/CodeEdit".text = ""
+		
+		
+		
+		var importedFlows = []
+		
+		for a in $HSplitContainer/FlowContainers.get_children():
+			importedFlows.append(a.name)
+		
+		for a in $HSplitContainer/VBoxContainer/InfoContainer/Flowcharts/Flowcharts.get_children():
+				a.checkEnable(importedFlows)
 
 
 
@@ -134,7 +167,7 @@ func _data_request(requestType,item,type,value):
 
 func getFlowData(item,type,value):
 	#{0: {"id": 0, "name": testName, "type": Subroutine/Flowchart, "projectParent":("projects" id)}}
-	var flows = projectContent["flowcharts"]
+	var flows = projectContent.flowcharts
 	
 	match type:
 		"name":
@@ -145,9 +178,3 @@ func getFlowData(item,type,value):
 			for a in flows:
 				if a == str(value):
 					item.returnData(flows[a],"flow")
-	
-	
-
-
-func _on_filter_text_changed(new_text):
-	pass # Replace with function body.

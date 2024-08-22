@@ -21,8 +21,8 @@ func _on_option_button_item_selected(index):
 
 
 func loadFromData(data,packageData,dict):
-	$ActionIdEdit.text = str(data.id)
-	$ActionNameEdit.text = dict[data.name]
+	setID(data.id)
+	setName(dict[data.name])
 	
 	var packageIdsList = []
 	for a in packageData:
@@ -65,15 +65,15 @@ func getID():
 		return 0
 	return setID(int(idVal))
 
-func setLabel(label):
+func setName(label):
 	$ActionNameEdit.text = label
 	return label
 
-func getLabel():
+func getName():
 	var regex = RegEx.new()
 	regex.compile("/[\"^\"]/g")
 	var idVal = regex.sub($ActionNameEdit.text,"")
-	return setLabel(idVal)
+	return setName(idVal)
 
 
 
@@ -83,7 +83,7 @@ func runFilter(text):
 	visible = true
 	if text in str(getID()).to_lower():
 		return
-	if text in getLabel().to_lower():
+	if text in getName().to_lower():
 		return
 	if text in $OptionButton.get_item_text($OptionButton.selected).to_lower():
 		return
