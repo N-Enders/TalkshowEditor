@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3 uid="uid://bt27vnvnn0ckf"]
+
+[ext_resource type="Script" path="res://PrepastedData.gd" id="1_hsusf"]
+[ext_resource type="Script" path="res://prepastedData/Quixort.gd" id="2_w304j"]
+
+[node name="PrepastedData" type="ScrollContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_stretch_ratio = 0.0
+script = ExtResource("1_hsusf")
+
+[node name="Packs" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="pp9Label" type="Label" parent="Packs"]
+layout_mode = 2
+text = "Party Pack 9"
+
+[node name="pp9" type="HBoxContainer" parent="Packs"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="Quixort" type="Button" parent="Packs/pp9"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Quixort"
+script = ExtResource("2_w304j")
+
+[node name="Label2" type="Label" parent="Packs"]
+layout_mode = 2
+text = "Party Pack 9"
+
+[node name="pp10" type="HBoxContainer" parent="Packs"]
+layout_mode = 2
+
+[connection signal="data" from="Packs/pp9/Quixort" to="." method="_on_data"]
+[connection signal="pressed" from="Packs/pp9/Quixort" to="Packs/pp9/Quixort" method="_on_pressed"]

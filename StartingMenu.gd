@@ -1,14 +1,18 @@
 extends Control
 
+@export var prepastedData: PackedScene
+
 var wait = 0
 
 signal data_recieved
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	setNewMenuVisible(false)
 	setMainMenuVisible(true)
 	setLoadingVisible(false)
+	$PrepastedData.visible = false
 
 
 
@@ -30,6 +34,7 @@ func setMainMenuVisible(vis):
 	$Label.visible = vis
 	$Load.visible = vis
 	$New.visible = vis
+	$NewLoad.visible = vis
 
 
 
@@ -46,7 +51,7 @@ func _on_new_pressed():
 
 
 func _on_newmenucode_text_changed():
-	var text = $newmenucode.text
+	var text = ""
 	if "ExportMain" in text:
 		var list = text.split('\n')
 		for a in list:
@@ -82,10 +87,13 @@ func getDataType(data,type):
 
 
 
+
 func waitTime():
 	wait += 1
 	if ((wait % 200) == 0):
 		await get_tree().create_timer(1.0).timeout
+
+
 
 
 
@@ -287,3 +295,18 @@ func decompStart(start):
 	preData.erase("media")
 	
 	return startData
+
+
+func _prepasted_decomp(data):
+	setLoadingVisible(true)
+	setNewMenuVisible(false)
+	setMainMenuVisible(false)
+	$PrepastedData.visible = false
+	$LoadingLabel.setDetails("Creating a new project")
+	data_recieved.emit({"startData":data,"flows":[]})
+	$LoadingLabel.setDetails("Project decompiled")
+
+
+func _on_new_load_pressed():
+	setMainMenuVisible(false)
+	$PrepastedData.visible = true

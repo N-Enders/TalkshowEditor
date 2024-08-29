@@ -5,6 +5,7 @@ extends Control
 @export var input: PackedScene
 @export var reference: PackedScene
 @export var returnc: PackedScene
+@export var code: PackedScene
 
 @export var unknown: PackedScene
 
@@ -15,6 +16,7 @@ func createFlowchartFromData(preData):
 		
 	var connectionsToMake = []
 	var cellIdsToName = {}
+	
 		
 	for a in preData["cells"].split("^"):
 		var cell = ""
@@ -35,6 +37,8 @@ func createFlowchartFromData(preData):
 				cell = goto.instantiate()
 			"N":
 				cell = returnc.instantiate()
+			"C":
+				cell = code.instantiate()
 			_:
 				cell = unknown.instantiate()
 		
@@ -57,6 +61,8 @@ func createFlowchartFromData(preData):
 		for b in returnValues["connections"]:
 			connectionsToMake.append({"from_node": cell.name, "from_port": b["from_port"], "to_node": b["to_cell"]})
 	
+	
+	knownStartCell = preData.c
 	
 	for a in connectionsToMake:
 		if(a["to_node"] in cellIdsToName.keys()):
@@ -192,6 +198,10 @@ func sort_all():
 					connectionsToCheck.append(a["to_node"])
 			preConnections.sort_custom(sort)
 			newConnectionList.append_array(preConnections)
+	if knownStartCell != 0:
+		for a in $GraphEdit.get_children():
+			if a.getID() == knownStartCell:
+				minimalConnections.push_front(a.name)
 	select_all()
 	for a in minimalConnections:
 		var node
